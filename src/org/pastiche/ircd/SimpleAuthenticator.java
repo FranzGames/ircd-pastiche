@@ -22,6 +22,7 @@ public class SimpleAuthenticator implements Authenticator
 
    public SimpleAuthenticator (String propFilename)
       {
+      BufferedInputStream input = null;
 
       try
          {
@@ -29,7 +30,9 @@ public class SimpleAuthenticator implements Authenticator
 
          filename = propFilename;
 
-         props.load (new BufferedInputStream (new FileInputStream (propFilename)));
+         input = new BufferedInputStream (new FileInputStream (propFilename));
+
+         props.load (input);
       }
       catch (IOException io)
          {
@@ -37,20 +40,39 @@ public class SimpleAuthenticator implements Authenticator
 
          io.printStackTrace ();
          }
+      finally
+         {
+         if (input != null)
+            {
+            try {input.close ();} catch (Throwable t) {}
+            }
+         }
       }
 
    public synchronized void reload ()
       {
+      BufferedInputStream input = null;
+
       try
          {
          java.util.Properties newProps = new java.util.Properties ();
 
-         newProps.load (new BufferedInputStream (new FileInputStream (filename)));
+         input = new BufferedInputStream (new FileInputStream (filename));
+
+         newProps.load (input);
+
          props = newProps;
          }
       catch (IOException io)
          {
          io.printStackTrace ();
+         }
+      finally
+         {
+         if (input != null)
+            {
+            try {input.close ();} catch (Throwable t) {}
+            }
          }
       }
 
