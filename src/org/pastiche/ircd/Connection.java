@@ -28,7 +28,7 @@ public class Connection implements Runnable {
 	private String disconnectMessage = "Connection reset by peer";
 	private ConnectedTarget owner;
 	private java.net.Socket socket;
-	private java.io.BufferedOutputStream out;
+	private SendQueuer sendQueuer;
 	private boolean disconnect = false;
 
 
@@ -36,22 +36,31 @@ public class Connection implements Runnable {
 
 public void run() {
 	try {
+      sendQueuer.setName (Thread.currentThread ().getName ()+" Send Queue");
+
 		String line;
 		java.io.BufferedReader in =
 			new java.io.BufferedReader(
 				new java.io.InputStreamReader(socket.getInputStream()));
 
 		while (((line = in.readLine()) != null) && !disconnect) {
-			System.out.println("Rec: " + line);
+//			System.out.println("Rec: " + line);
 			getOwner().processCommand(line);
 		}
+      System.out.println ("Disconnect in thread "+Thread.currentThread ().getName ());
 		System.out.println("User disconnected. user = "+getOwner ().getName ());
 		getOwner().doDisconnect(disconnectMessage);
 	} catch (java.io.IOException ioe) {
+      System.err.println ("Exception in thread "+Thread.currentThread ().getName ());
 		System.out.println("IOException in user "+getOwner ().getName ()+": " + ioe);
 		getOwner().doDisconnect(ioe);
 	} finally {
 		try {
+         // Stop the Queuer thread.
+
+         if (sendQueuer != null)
+            sendQueuer.disconnect ();
+
 			socket.close();
 		} catch (java.io.IOException ioe) {
 		}
@@ -61,22 +70,17 @@ public void run() {
 /**
  * Shouldn't be called except from within ConnectedTarget.
  */
-protected void send(String message) {
-	try {
-      if (!disconnect)
-         {
-   		out.write(message.getBytes(), 0, message.length());
-   		out.write(END_OF_LINE, 0, END_OF_LINE.length);
-   		out.flush();
-         }
-	} catch (java.io.IOException ioe) {
-		disconnect = true;
-	}
-}
+protected void send(String message)
+   {
+   if (!disconnect)
+      sendQueuer.addMessageToQueue (message);
+   }
 
-
-
-
+protected void sendPriority(String message)
+   {
+   if (!disconnect)
+      sendQueuer.addPriorityMessageToQueue (message);
+   }
 
 public void disconnect(String disconnectMessage) {
 	this.disconnectMessage = (disconnectMessage == null) ? "" : disconnectMessage;
@@ -87,11 +91,23 @@ public void disconnect(String disconnectMessage) {
 		this.socket = socket;
 		this.owner = owner;
 
+      try
+         {
+         socket.setSoTimeout (IrcdConfiguration.getInstance().getDeadClientTimeout() * 1000);
+         }
+		catch (java.net.SocketException se) {
+         se.printStackTrace ();
+		}
+
 		try {
-			this.out = new java.io.BufferedOutputStream(
-				socket.getOutputStream());
+         // Add thread for sending so that one slow connection will not
+         // slow the rest of the connections.
+         sendQueuer = new SendQueuer (new java.io.BufferedOutputStream(
+				socket.getOutputStream()));
+         sendQueuer.start ();
 		} catch (java.io.IOException ioe) {
-			System.out.println("Fark");
+         ioe.printStackTrace ();
+			System.out.println("This is bad");
 		}
 	}
 

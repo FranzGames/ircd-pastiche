@@ -15,8 +15,8 @@ import org.pastiche.ircd.ConnectedTarget;
 public class UnregisteredClient extends ConnectedTarget {
 	public static final String COMMAND_FACTORY_ID = "unregistered";
 	private String nick = null;
+	private String passwd = null;
 	private String username = null;
-
 
 
 	public CommandFactory getCommandFactory() {
@@ -108,6 +108,10 @@ public String getNick() {
 	return nick;
 }
 
+public String getPassword() {
+	return passwd;
+}
+
 /**
  * Insert the method's description here.
  * Creation date: (2/01/2001 6:12:57 PM)
@@ -125,8 +129,8 @@ public java.util.Set getVisibleLocalTargets() {
 }
 
 public boolean isDead() {
-	return new java.util.Date().compareTo(timeConnected) / 1000 > 
-		org.pastiche.ircd.IrcdConfiguration.getInstance().getUnregisteredClientTimeout();		
+	return new java.util.Date().compareTo(timeConnected) / 1000 >
+		org.pastiche.ircd.IrcdConfiguration.getInstance().getUnregisteredClientTimeout();
 }
 
 public boolean isIdle() {
@@ -155,6 +159,10 @@ public void setIrcname(java.lang.String newIrcname) {
 
 public void setNick(String nick) {
 	this.nick = nick;
+}
+
+public void setPassword(String pass) {
+	this.passwd = pass;
 }
 
 /**

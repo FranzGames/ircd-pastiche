@@ -10,6 +10,7 @@ import org.pastiche.ircd.rfc1459.*;
  */
 public class DebugIrcdConfiguration extends IrcdConfiguration {
 	private Listener[] listeners = new Listener[1];
+   private SimpleAuthenticator authenticator = new SimpleAuthenticator ("nickpass.properties");
 
 public DebugIrcdConfiguration() {
 	Server server = new Server();
@@ -42,6 +43,10 @@ public DebugIrcdConfiguration() {
 	connectedMap.put("WHOIS", new WhoisCommand());
 
 	((Command)connectedMap.get("PRIVMSG")).setIdleCountResetter(true);
+
+   // Allow the reloading of the authentication list every 5 minutes
+
+   Scheduler.addTask (new ReloadAuthenticator (), 30000, 30000);
 }
 
 	public void checkConfiguration() throws ConfigurationException {
@@ -102,4 +107,18 @@ public int getUnregisteredClientTimeout() {
 public NameNormalizer getUserNormalizer(){
 	return userNormalizer;
 }
+
+public Authenticator getNickPasswordAuthenticator ()
+   {
+   return authenticator;
+   }
+
+class ReloadAuthenticator extends java.util.TimerTask
+   {
+   public void run ()
+      {
+      authenticator.reload ();
+      }
+   }
+
 }

@@ -37,31 +37,24 @@ public void processCommand(String line) {
 	   }
 }
 
-class SendCommand extends org.pastiche.ircd.Command
-   {
-   String message;
-
-   public SendCommand (String str)
-      {
-      message = str;
-      }
-
-   public void process ()
-      {
-   	if (!connection.isDisconnected()) {
-   		System.out.println("Sending to " + getName() + ": " + message);
-   		connection.send(message);
-   	}
-      }
-   }
-
-private void send(String message) {
-//	CommandQueue.getInstance().add(new SendCommand (message));
+protected void send(String message) {
 	if (!connection.isDisconnected()) {
-		System.out.println("Sending to " + getName() + ": " + message);
+//		System.out.println("Sending to " + getName() + ": " + message);
 		connection.send(message);
 	}
 }
+
+protected void sendPriority(String message) {
+	if (!connection.isDisconnected()) {
+//		System.out.println("Sending Priority to " + getName() + ": " + message);
+		connection.sendPriority(message);
+	}
+}
+
+   public void ping ()
+      {
+      sendPriority ("PING :"+IrcdConfiguration.getInstance().getServerName());
+      }
 
 	public abstract CommandFactory getCommandFactory();
 	protected abstract void doDisconnect(String reason);
@@ -122,6 +115,7 @@ public static ConnectedTarget newConnectedClient(Server server, Socket conn) {
 	try {
 		target = (ConnectedTarget)
 			IrcdConfiguration.getInstance().getInitialConnectionClass().getConstructor(new Class[] {Server.class, Socket.class}).newInstance(new Object[] {server, conn});
+      server.newConnectedTarget (target);
 	} catch (NoSuchMethodException nsme) {
 		// FIXME: BIG CRAZY ERROR CONDITION.
 	} catch (java.lang.reflect.InvocationTargetException ite) {

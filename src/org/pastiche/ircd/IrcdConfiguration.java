@@ -67,7 +67,20 @@ public NameNormalizer getServerNormalizer(){
 		return 0;
 	}
 
+   // Return the amount of time in seconds
+	public int getDeadClientTimeout() {
+		return 120;
+	}
+
 public NameNormalizer getUserNormalizer(){
 	return null;
 }
+
+/* If the result of the method call is null then
+   there is no authenticator and therefore disabled */
+
+public Authenticator getNickPasswordAuthenticator ()
+   {
+   return null;
+   }
 }

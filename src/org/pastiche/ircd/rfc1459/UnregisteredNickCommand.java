@@ -19,7 +19,19 @@ public void process() {
 		ErrorHandler.getInstance().erroneousNickname(getSource(), newNick);
 		return;
 	}
-	
+
+	if (org.pastiche.ircd.IrcdConfiguration.getInstance().getNickPasswordAuthenticator () != null)
+      {
+      if (getSource () instanceof UnregisteredClient)
+         {
+   		UnregisteredClient source = (UnregisteredClient) getSource();
+
+         if (!org.pastiche.ircd.IrcdConfiguration.getInstance().getNickPasswordAuthenticator ().authenicate (getSource (),
+            newNick, source.getPassword ()))
+            return;
+         }
+	   }
+
 	try {
 		UnregisteredClient source = (UnregisteredClient) getSource();
 		source.getServer().addUser(newNick, source);		

@@ -46,7 +46,7 @@ public class CommandQueue implements Runnable {
 
          try
             {
-            System.out.println ("Command Class = "+command.getClass ().getName ());
+//            System.out.println ("Command Class = "+command.getClass ().getName ());
 			   command.process();
             }
          catch (Throwable t)

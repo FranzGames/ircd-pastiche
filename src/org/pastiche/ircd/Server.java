@@ -20,6 +20,7 @@ package org.pastiche.ircd;
  */
 
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * <p>Represents the state of the current server. It might be
@@ -32,12 +33,29 @@ public class Server implements Target {
 	private Map connectedTargets = new java.util.HashMap();
 	private Map networkUsers = new java.util.HashMap();
 	private Map channels = new java.util.HashMap();
+   private boolean firstConnection = true;
+
 /**
  * Server constructor comment.
  */
 public Server() {
 	super();
 }
+
+public synchronized void newConnectedTarget (Target target)
+   {
+   if (firstConnection)
+      {
+      firstConnection = false;
+
+      // Send notifications twice before timing out
+      Scheduler.addTask (new DeadClientTask (this,
+         IrcdConfiguration.getInstance().getDeadClientTimeout() / 2),
+         (IrcdConfiguration.getInstance().getDeadClientTimeout() / 4) * 1000,
+         (IrcdConfiguration.getInstance().getDeadClientTimeout() / 2) * 1000);
+      }
+   }
+
 public void addChannel(String identifier, Channel channel) {
 	identifier = IrcdConfiguration.getInstance().getChannelNormalizer().normalise(identifier);
 
@@ -78,6 +96,20 @@ private void forceReplaceUser(String normalizedIdentifier, Target user) throws C
 		connectedTargets.put(normalizedIdentifier, user);
 	}
 }
+
+public void pingNecessaryUsers (int idle)
+   {
+   Iterator iter = connectedTargets.values ().iterator ();
+
+   while (iter.hasNext ())
+      {
+      ConnectedTarget targ = (ConnectedTarget) iter.next ();
+
+      if (targ.getSecondsIdle() >= idle)
+         targ.ping ();
+      }
+   }
+
 public String getAddress() {
 	try {
 		return java.net.InetAddress.getLocalHost().getHostAddress();
@@ -184,10 +216,10 @@ public void replaceUser(String identifier, Target user) throws CollisionExceptio
 
 	if (identifier.equals(IrcdConfiguration.getInstance().getUserNormalizer().normalise(user.getName())))
 		return;
-	
+
 	if (networkUsers.containsKey(identifier))
 		throw new CollisionException();
-		
+
 	forceReplaceUser(identifier, user);
 }
 public void replaceUser(Target user) {

@@ -30,6 +30,7 @@ public static int port = 6667;
 public static String server = "localhost";
 
 public static void main(String[] args) {
+
 	System.out.print("Loading configuration...");
 
 	try {
@@ -46,7 +47,7 @@ public static void main(String[] args) {
 	for (int i = 0; i < IrcdConfiguration.getInstance().getListeners().length; i++) {
 		Listener l = IrcdConfiguration.getInstance().getListeners()[i];
 		System.out.print(l + "...");
-		new Thread(IrcdConfiguration.getInstance().getListeners()[i], "Connection Listener").start();
+		new Thread(IrcdConfiguration.getInstance().getListeners()[i], "Connection Listener Port "+IrcdConfiguration.getInstance().getListeners()[i].getPort ()).start();
 		System.out.println("done.");
 	}
 }

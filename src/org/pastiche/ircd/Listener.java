@@ -19,6 +19,11 @@ public class Listener implements Runnable {
 		return ((bindHost != null) ? bindHost : "*") + ":" + port;
 	}
 
+   public int getPort ()
+      {
+      return port;
+      }
+
 public void run() {
 	ServerSocket sock = null;
 	try {
