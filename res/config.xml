@@ -111,6 +111,10 @@
        	    <name>KILL</name>
        	    <handler>org.pastiche.ircd.rfc1459.KillCommand</handler>
        	</command>
+       	<command>
+       	    <name>AWAY</name>
+       	    <handler>org.pastiche.ircd.rfc1459.AwayCommand</handler>
+       	</command>
        </commandset>
    </commands>
 </configuration>

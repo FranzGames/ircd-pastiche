@@ -18,7 +18,7 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 public class WhoisCommand extends org.pastiche.ircd.Command {
 private void doWhois(RegisteredUser user) {
 	ReplyHandler.getInstance().whoisUser(getSource(), user.getNick(), user.getUsername(), user.getHostname(), user.getRealName());
@@ -27,6 +27,9 @@ private void doWhois(RegisteredUser user) {
 	if (visibleChannels.length > 0) {
 		ReplyHandler.getInstance().whoisChannels(getSource(), user.getNick(), visibleChannels);
 	}
+
+   if (user.isAway ())
+      ReplyHandler.getInstance().away (getSource(), user.getNick(), user.getAwayMsg ());
 
 	ReplyHandler.getInstance().whoisServer(getSource(), user.getNick(), user.getServer().getName(), user.getServer().getInfo());
 	ReplyHandler.getInstance().whoisIdle(getSource(), user.getNick(), user.getSecondsIdle());

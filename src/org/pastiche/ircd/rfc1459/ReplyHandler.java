@@ -93,6 +93,19 @@ public void luserOp (Target target, int ircOps) {
 public void luserUnknown (Target target, int unknownConnections) {
 	sendTo(target, "253", "\002"+unknownConnections + "\002 :unknown connection(s)");
 }
+
+public void away(Target target, String nick, String msg) {
+	sendTo(target, "301", nick+" :"+msg);
+}
+
+public void unAway(Target target) {
+	sendTo(target, "305", ": You are no longer marked as being away");
+}
+
+public void nowAway(Target target) {
+	sendTo(target, "306", ": You have been marked as being away");
+}
+
 public void motd(Target target, String line) {
 	sendTo(target, "372", ":- " + line);
 }

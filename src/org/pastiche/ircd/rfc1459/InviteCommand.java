@@ -47,6 +47,15 @@ public void process() {
 			return;
 		}
 
+      if (invitee instanceof RegisteredUser)
+         {
+         if (((RegisteredUser)invitee).isAway ())
+            {
+            ReplyHandler.getInstance().away (getSource(), invitee.getName(), ((RegisteredUser)invitee).getAwayMsg ());
+            return;
+            }
+         }
+
 		channel.addInvitation(invitee);
 		invitee.send(getSource(), "INVITE " + invitee.getName() + " :" + channel.getName());
 	}

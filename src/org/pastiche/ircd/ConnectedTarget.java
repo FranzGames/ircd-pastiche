@@ -110,6 +110,8 @@ public java.util.Date getSignonTime() {
 
 	public abstract boolean isIdle();
 
+	public abstract boolean isAway();
+
 public static ConnectedTarget newConnectedClient(Server server, Socket conn) {
 	ConnectedTarget target = null;
 	try {

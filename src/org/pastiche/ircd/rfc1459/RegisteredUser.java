@@ -32,6 +32,7 @@ public class RegisteredUser extends org.pastiche.ircd.ConnectedTarget {
 	private String username = null;
 	private String hostname = null;
 	private String realName = null;
+	private String awayMsg = null;
 	private java.util.Set myChannels = new java.util.HashSet();
 	private String disconnectReason = null;
 	private long lastUnidle = 0;
@@ -195,6 +196,21 @@ public boolean isDead() {
 public boolean isIdle() {
 	return false;
 }
+
+public boolean isAway() {
+	return (awayMsg != null);
+}
+
+public void setAway (String msg)
+   {
+   awayMsg = msg;
+   }
+
+public String getAwayMsg ()
+   {
+   return awayMsg;
+   }
+
 public void part(org.pastiche.ircd.rfc1459.Channel channel, String notifyCommand)
 	throws org.pastiche.ircd.NotOnChannelException {
 

@@ -47,7 +47,15 @@ public void run() {
 
 		while (((line = in.readLine()) != null) && !disconnect) {
 //			System.out.println("Rec: " + line);
-			getOwner().processCommand(line);
+         try
+            {
+			   getOwner().processCommand(line);
+            }
+         catch (Throwable t)
+            {
+            System.out.println ("Problem in thread "+Thread.currentThread ().getName ()+" user = "+getOwner ().getName ());
+            t.printStackTrace ();
+            }
 		}
       System.out.println ("Disconnect in thread "+Thread.currentThread ().getName ());
 		System.out.println("User disconnected. Time = "+(new Date())+" user = "+getOwner ().getName ());
@@ -56,6 +64,10 @@ public void run() {
       System.err.println ("Exception in thread "+Thread.currentThread ().getName ()+" Time = "+(new Date()));
 		System.out.println("IOException in user "+getOwner ().getName ()+": " + ioe);
 		getOwner().doDisconnect(ioe);
+   } catch (Throwable thr) {
+      System.err.println ("Exception in thread "+Thread.currentThread ().getName ()+" Time = "+(new Date()));
+		System.out.println("Generic Exception in user "+getOwner ().getName ()+": " + thr);
+		getOwner().doDisconnect(thr.toString());
 	} finally {
 		try {
          // Stop the Queuer thread.

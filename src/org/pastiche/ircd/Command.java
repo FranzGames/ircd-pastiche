@@ -139,11 +139,16 @@ public Object clone() {
 		throw new RuntimeException("CloneNotSupportedException " + cnse.getMessage());
 	}
 }
+
 protected String[] calculateTargets(int argumentPosition) {
+   return calculateTargets(argumentPosition, ",");
+}
+
+protected String[] calculateTargets(int argumentPosition, String delim) {
    if (getArguments () == null)
       return new String[0];
 
-	java.util.StringTokenizer tokens = new java.util.StringTokenizer((String)getArguments().get(argumentPosition), ",");
+	java.util.StringTokenizer tokens = new java.util.StringTokenizer((String)getArguments().get(argumentPosition), delim);
 	String[] targets = new String[tokens.countTokens()];
 
 	for (int i = 0; i < targets.length; i++) {
@@ -161,10 +166,13 @@ protected String getArgument(int index) {
 
 	if ((index + 1) > args.size())
 		return null;
-		
+
 	return (String)args.get(index);
 }
 protected int getArgumentCount() {
+   if (args == null)
+      return 0;
+
 	return args.size();
 }
 public String getName() {

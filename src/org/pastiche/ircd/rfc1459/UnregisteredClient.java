@@ -137,6 +137,11 @@ public boolean isIdle() {
 	return false;
 }
 
+public boolean isAway() {
+	return false;
+}
+
+
 public void remove() {}
 
 /**
