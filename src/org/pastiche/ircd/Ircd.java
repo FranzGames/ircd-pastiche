@@ -18,7 +18,7 @@ package org.pastiche.ircd;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 /**
  * <p>This class is responsible for starting up the ircd. It is
  * just a main method - it initialises the IrcdConfiguration
@@ -26,6 +26,9 @@ package org.pastiche.ircd;
  * the configuration, and the server is started.
  */
 public class Ircd {
+public static int port = 6667;
+public static String server = "localhost";
+
 public static void main(String[] args) {
 	System.out.print("Loading configuration...");
 
@@ -36,14 +39,14 @@ public static void main(String[] args) {
 		System.out.println(ce.getMessage());
 		System.exit(127);
 	}
-	
+
 	System.out.println("done.");
 	System.out.println("Starting listeners:");
 
 	for (int i = 0; i < IrcdConfiguration.getInstance().getListeners().length; i++) {
 		Listener l = IrcdConfiguration.getInstance().getListeners()[i];
 		System.out.print(l + "...");
-		new Thread(IrcdConfiguration.getInstance().getListeners()[i]).start();
+		new Thread(IrcdConfiguration.getInstance().getListeners()[i], "Connection Listener").start();
 		System.out.println("done.");
 	}
 }

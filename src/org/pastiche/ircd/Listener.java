@@ -13,12 +13,7 @@ public class Listener implements Runnable {
 	private String bindHost = null;
 	private int port = 6667;
 	private int backlog = 50;
-
-
-
-
-
-
+   public long connNo = 0;
 
 	public String toString() {
 		return ((bindHost != null) ? bindHost : "*") + ":" + port;
@@ -30,8 +25,8 @@ public void run() {
 		if (bindHost == null) {
 			sock = new ServerSocket(port, backlog);
 		} else {
-			sock = 
-				new ServerSocket(port, backlog, java.net.InetAddress.getByName(bindHost)); 
+			sock =
+				new ServerSocket(port, backlog, java.net.InetAddress.getByName(bindHost));
 		}
 	} catch (java.net.UnknownHostException uhe) {
 		// FIXME: Alert scheme, remove Listener from configuration.
@@ -45,8 +40,9 @@ public void run() {
 	while (sock != null) {
 		try {
 			Socket conn = sock.accept();
+         connNo++;
 			ConnectedTarget client = ConnectedTarget.newConnectedClient(server, conn);
-			new Thread(client.getConnection()).start();
+			new Thread(client.getConnection(), "Connection #"+connNo).start();
 		} catch (java.io.IOException ioe) {
 			// FIXME: Alert scheme, remove Listener from configuration.
 			System.out.println("Could not accept connection on Listener " + this);

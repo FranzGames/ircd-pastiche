@@ -18,14 +18,14 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 /**
  * <p>This class breaks rfc1459, in favour of rfc2812. rfc1459's rules on allowed nickname
  * characters, and character equivalence are internally inconsistent, and not implemented on
  * any network or client anywhere, afaik.
  */
 public class NickNormalizer implements org.pastiche.ircd.NameNormalizer {
-	public static final int MAX_NICK_LENGTH = 9;
+	public static final int MAX_NICK_LENGTH = 255;
 	public static final char[] SPECIAL_CHARS = {'-', '[', ']', '\\', '`', '^', '{', '}', '~', '|', '_'};
 	public static final char[] UPPER_CASE_SPECIAL_CHARS = {'[', ']', '\\', '~'};
 	public static final char[] LOWER_CASE_SPECIAL_CHARS = {'{', '}', '|', '^'};

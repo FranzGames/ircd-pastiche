@@ -19,7 +19,7 @@ public class CommandQueue implements Runnable {
 	public static CommandQueue getInstance() {
 		if (instance == null) {
 			instance = new CommandQueue();
-			new Thread(instance).start();
+			new Thread(instance, "CommandQueue").start();
 		}
 
 		return instance;
@@ -44,7 +44,15 @@ public class CommandQueue implements Runnable {
 				command = (Command) queue.removeFirst();
 			}
 
-			command.process();
+         try
+            {
+            System.out.println ("Command Class = "+command.getClass ().getName ());
+			   command.process();
+            }
+         catch (Throwable t)
+            {
+            t.printStackTrace ();
+            }
 
 			synchronized(command) {
 				command.notifyAll();

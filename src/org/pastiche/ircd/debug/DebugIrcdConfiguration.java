@@ -13,11 +13,13 @@ public class DebugIrcdConfiguration extends IrcdConfiguration {
 
 public DebugIrcdConfiguration() {
 	Server server = new Server();
-	listeners[0] = new Listener(server, 6667);
+	listeners[0] = new Listener(server, Ircd.port, Ircd.server);
 
 	unregisteredMap.put("USER", new UnregisteredUserCommand());
 	unregisteredMap.put("NICK", new UnregisteredNickCommand());
+	unregisteredMap.put("PASS", new PassCommand());
 
+	connectedMap.put("PASS", new PassCommand());
 	connectedMap.put("NICK", new RegisteredNickCommand());
 	connectedMap.put("PRIVMSG", new PrivmsgCommand());
 	connectedMap.put("NOTICE", new NoticeCommand());

@@ -140,6 +140,9 @@ public Object clone() {
 	}
 }
 protected String[] calculateTargets(int argumentPosition) {
+   if (getArguments () == null)
+      return new String[0];
+
 	java.util.StringTokenizer tokens = new java.util.StringTokenizer((String)getArguments().get(argumentPosition), ",");
 	String[] targets = new String[tokens.countTokens()];
 
@@ -153,6 +156,9 @@ protected java.util.List getArguments() {
 	return args;
 }
 protected String getArgument(int index) {
+   if (args == null)
+      return null;
+
 	if ((index + 1) > args.size())
 		return null;
 		

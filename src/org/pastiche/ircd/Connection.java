@@ -18,7 +18,7 @@ package org.pastiche.ircd;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 /**
  * <p>A Connection handles the actual sockety things to do with
  * sending and receiving stuff.
@@ -37,18 +37,18 @@ public class Connection implements Runnable {
 public void run() {
 	try {
 		String line;
-		java.io.BufferedReader in = 
+		java.io.BufferedReader in =
 			new java.io.BufferedReader(
-				new java.io.InputStreamReader(socket.getInputStream())); 
+				new java.io.InputStreamReader(socket.getInputStream()));
 
 		while (((line = in.readLine()) != null) && !disconnect) {
 			System.out.println("Rec: " + line);
 			getOwner().processCommand(line);
 		}
-		System.out.println("User disconnected.");
+		System.out.println("User disconnected. user = "+getOwner ().getName ());
 		getOwner().doDisconnect(disconnectMessage);
 	} catch (java.io.IOException ioe) {
-		System.out.println("IOException in user: " + ioe);
+		System.out.println("IOException in user "+getOwner ().getName ()+": " + ioe);
 		getOwner().doDisconnect(ioe);
 	} finally {
 		try {
@@ -63,9 +63,12 @@ public void run() {
  */
 protected void send(String message) {
 	try {
-		out.write(message.getBytes(), 0, message.length());
-		out.write(END_OF_LINE, 0, END_OF_LINE.length);
-		out.flush();
+      if (!disconnect)
+         {
+   		out.write(message.getBytes(), 0, message.length());
+   		out.write(END_OF_LINE, 0, END_OF_LINE.length);
+   		out.flush();
+         }
 	} catch (java.io.IOException ioe) {
 		disconnect = true;
 	}

@@ -26,8 +26,8 @@ public static CommandFactory getCommandFactory(String identifier) {
 	if ((factory = (CommandFactory) instances.get(identifier)) != null)
 		return factory;
 
-	factory = new CommandFactory(IrcdConfiguration.getInstance().getCommandMap(identifier), 
-			IrcdConfiguration.getInstance().getDefaultCommand(identifier)); 
+	factory = new CommandFactory(IrcdConfiguration.getInstance().getCommandMap(identifier),
+			IrcdConfiguration.getInstance().getDefaultCommand(identifier));
 
 	instances.put(identifier, factory);
 	return factory;
@@ -75,7 +75,7 @@ public Command createCommand(String commandLine) {
 
 	nextToken = commandLine.substring(start, pos);
 
-	if (Character.isDigit(nextToken.charAt(start))) {
+	if (Character.isDigit(nextToken.charAt(0))) {
 		throw new RuntimeException("Numerics not supported");
 	} else {
 		command = getCommand(commandLine.substring(start, pos));

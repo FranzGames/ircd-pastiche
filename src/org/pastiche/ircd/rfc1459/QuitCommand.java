@@ -18,10 +18,11 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 public class QuitCommand extends org.pastiche.ircd.Command {
 	private boolean requiresProcess = false;
 public void preProcess() {
+   System.out.println ("QuitCommand:preProcess\n");
 	((org.pastiche.ircd.ConnectedTarget)getSource()).getConnection().disconnect(getArgument(0));
 }
 public boolean requiresProcess() {

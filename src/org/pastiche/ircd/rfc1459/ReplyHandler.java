@@ -49,11 +49,15 @@ public void endOfList (Target target) {
 	sendTo(target, "323", "End of /LIST");
 }
 public void endOfMotd(Target target) {
-	sendTo(target, "376", ":End of /MOTD command");
+	sendTo(target, "376", ":End of /MOTD command.");
 }
 public void endOfWhois(Target target) {
 	sendTo(target, "318", ":End of /WHOIS list");
 }
+public void endOfWho(Target target, String user) {
+	sendTo(target, "315", user+" :End of /WHO list");
+}
+
 public static ReplyHandler getInstance() {
 	if (instance == null) {
 		instance = new ReplyHandler();
@@ -70,24 +74,24 @@ public void list (Target target, String channelName, int memberCount, String top
 	if (topic != null) {
 		reply.append(topic);
 	}
-	
+
 	sendTo(target, "322", reply.toString());
 }
 public void luserChannels (Target target, int channels) {
-	sendTo(target, "254", channels + " :channels formed");
+	sendTo(target, "254", "\002"+channels +"\002 :channels formed");
 }
 public void luserClient (Target target, int visibleUsers, int invisibleUsers, int servers) {
-	sendTo(target, "251", ":There are " + visibleUsers + " users and " + invisibleUsers +
-		" invisible on " + servers + " servers");
+	sendTo(target, "251", ":There are \002" + visibleUsers + "\002 users and \002" + invisibleUsers +
+		"\002 invisible on \002" + servers + "\002 servers");
 }
 public void luserMe (Target target, int localUsers, int localServers) {
-	sendTo(target, "255",  ":I have " + localUsers + " clients and " + localServers + " servers");
+	sendTo(target, "255",  ":I have \002" + localUsers + "\002 clients and \002" + localServers + "\002 servers");
 }
 public void luserOp (Target target, int ircOps) {
-	sendTo(target, "252", ircOps + " :operator(s) online");
+	sendTo(target, "252", "\002"+ircOps + "\002 :operator(s) online");
 }
 public void luserUnknown (Target target, int unknownConnections) {
-	sendTo(target, "253", unknownConnections + " :unknown connection(s)");
+	sendTo(target, "253", "\002"+unknownConnections + "\002 :unknown connection(s)");
 }
 public void motd(Target target, String line) {
 	sendTo(target, "372", ":- " + line);
@@ -101,9 +105,9 @@ public void myInfo (Server server, Target target) {
 }
 public void names (Target target, Channel channel, Target[] names) {
 	StringBuffer reply = new StringBuffer(UnregisteredClient.MAX_MESSAGE_SIZE);
-	
+
 	for (int i = 0; i < names.length; i++) {
-		if ((reply.length() + names[i].getName().length() + 3) > 
+		if ((reply.length() + names[i].getName().length() + 3) >
 			target.getMaximumMessageSize(target.getServer())) {
 
 			sendTo(target, "353", "= " + channel.getName() + " :" + reply);
@@ -112,7 +116,7 @@ public void names (Target target, Channel channel, Target[] names) {
 
 		reply.append(channel.getNickListModifier(names[i]) + names[i].getName() + " ");
 	}
-		
+
 	sendTo(target, "353", "= " + channel.getName() + " :" + reply);
 }
 public void namesEnd(Target target, String channelNames) {
@@ -132,14 +136,14 @@ public void userhost(Target target, String userhosts) {
 	sendTo(target, "302", ":" + userhosts);
 }
 public void welcome (Server server, RegisteredUser user) {
-	sendTo(user, "001", ":Welcome to the " + server.getNetworkName() + 
+	sendTo(user, "001", ":Welcome to the " + server.getNetworkName() +
 		" IRC network " + user.getNickUserAtHost());
 }
 public void whoisChannels (Target target, String nick, String[] channels) {
 	StringBuffer reply = new StringBuffer(UnregisteredClient.MAX_MESSAGE_SIZE);
-	
+
 	for (int i = 0; i < channels.length; i++) {
-		if ((reply.length() + channels[i].length() + 2) > 
+		if ((reply.length() + channels[i].length() + 2) >
 			target.getMaximumMessageSize(target.getServer())) {
 
 			sendTo(target, "319", nick + " :" + reply);
@@ -148,7 +152,7 @@ public void whoisChannels (Target target, String nick, String[] channels) {
 
 		reply.append(channels[i] + " ");
 	}
-		
+
 	sendTo(target, "319", nick + " :" + reply);
 }
 public void whoisIdle(Target source, String nick, int idleSeconds) {
@@ -160,10 +164,14 @@ public void whoisServer(Target source, String nick, String server, String server
 public void whoisUser(Target source, String nick, String user, String host, String realName) {
 	sendTo(source, "311", nick + " " + user + " " + host + " * :" + realName);
 }
+public void who(Target source, Channel channel, Server server, String nick, String user, String host, String realName) {
+	sendTo(source, "352", channel.getName ()+" "+ user + " " + host + " "+server.getNetworkName()+" "+nick+" * :1" + realName);
+}
+
 public void yourHost (Server server, Target target) {
 	sendTo(target, "002", ":Your host is " + server.getName() +
-		"[@" + server.getAddress() + "], running version " + 
-		org.pastiche.ircd.Version.getFullVersion() + "[" + 
+		"[@" + server.getAddress() + "], running version " +
+		org.pastiche.ircd.Version.getFullVersion() + "[" +
 		CommandSetVersion.getFullVersion() + "]");
 }
 }

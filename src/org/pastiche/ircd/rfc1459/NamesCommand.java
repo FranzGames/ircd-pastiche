@@ -18,11 +18,41 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 public class NamesCommand extends org.pastiche.ircd.Command {
 public void process() {
 	String[] targets = calculateTargets(0);
-	StringBuffer editedTargetList = new StringBuffer(getArgument(0).length());
+	StringBuffer editedTargetList;
+
+   if (targets == null || targets.length == 0)
+      {
+      java.util.Vector vec = new java.util.Vector ();
+
+      java.util.Iterator iter = getSource().getServer().getChannels ();
+
+      if (iter != null)
+         {
+         int len = 0;
+
+         while (iter.hasNext ())
+            {
+            String name = ((Channel) iter.next ()).getName ();
+            vec.addElement (name);
+
+            if (name != null)
+               len += name.length ();
+            }
+
+         targets = new String[vec.size ()];
+
+         vec.copyInto (targets);
+         editedTargetList = new StringBuffer(len);
+         }
+      else
+         editedTargetList = new StringBuffer();
+      }
+   else
+      editedTargetList = new StringBuffer(getArgument(0).length());
 
 	for (int i = 0; i < targets.length; i++) {
 		Channel channel = (Channel) getSource().getServer().getChannel(targets[i]);
@@ -30,16 +60,16 @@ public void process() {
 		if (channel == null) {
 			continue;
 		}
-		
+
 		if (editedTargetList.length() == 0) {
 			editedTargetList.append(channel.getName());
 		} else {
 			editedTargetList.append("," + channel.getName());
 		}
-		
+
 		ReplyHandler.getInstance().names(getSource(), channel, channel.getMembers());
 	}
-	ReplyHandler.getInstance().namesEnd(getSource(), editedTargetList.toString());	
+	ReplyHandler.getInstance().namesEnd(getSource(), editedTargetList.toString());
 }
 public boolean requiresProcess() {
 	return true;

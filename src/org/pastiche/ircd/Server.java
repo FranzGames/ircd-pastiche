@@ -25,7 +25,7 @@ import java.util.Map;
  * <p>Represents the state of the current server. It might be
  * necessary to split off a separate Network object that represents the network
  * as a whole, but right now it's all in here.
- */ 
+ */
 public class Server implements Target {
 	private String networkName = "FooBar";
 	private String serverInfo = "This is hard-coded";
@@ -43,12 +43,14 @@ public void addChannel(String identifier, Channel channel) {
 
 	if (channels.containsKey(identifier))
 		throw new RuntimeException("Tried to add a channel that already exists");
-	
+
 	channels.put(identifier, channel);
 }
 public void addUser(String identifier, Target user) throws CollisionException {
 	identifier = IrcdConfiguration.getInstance().getUserNormalizer().normalise(identifier);
-	
+
+System.out.println ("addUser: id = "+identifier);
+
 	if (networkUsers.containsKey(identifier))
 		throw new CollisionException();
 
@@ -58,11 +60,16 @@ public void addUser(String identifier, Target user) throws CollisionException {
 		connectedTargets.put(identifier, user);
 }
 public boolean canSend(Target source) {
+   if (source == this)
+      System.out.println ("Can you send to yourself");
+
+   System.out.println ("canSend: this.getName () = "+getName ()+" source.name = "+getName ());
+
 	return true;
 }
 private void forceReplaceUser(String normalizedIdentifier, Target user) throws CollisionException {
 	String oldIdentifier = IrcdConfiguration.getInstance().getUserNormalizer().normalise(user.getName());
-	
+
 	networkUsers.remove(oldIdentifier);
 	networkUsers.put(normalizedIdentifier, user);
 
@@ -107,7 +114,7 @@ public Server getServer() {
 public ServerStatistics getServerStatistics() {
 	return new ServerStatistics(networkUsers.size(), 0, 1, 0, 0, 0, networkUsers.size(), 0);
 }
-/** 
+/**
  * Note: This method assumes that a valid username, servername and channel name
  * can not overlap. This is probably a bad thing.
  */
@@ -124,7 +131,7 @@ public Target getTarget(String identifier) {
 
 	return null;
 }
-/** 
+/**
  * Note: This method assumes that a valid username, servername and channel name
  * can not overlap. This is probably a bad thing.
  */
@@ -160,10 +167,17 @@ public void removeChannel(Channel channel) {
 }
 public void removeUser(Target user) {
 	String identifier = IrcdConfiguration.getInstance().getUserNormalizer().normalise(user.getName());
-	networkUsers.remove(identifier);
+
+System.out.println ("removeUser: id = "+identifier);
+
+	if (networkUsers.remove(identifier) == null)
+      System.err.println (user.getName()+" not in user list.");
 
 	if (user instanceof ConnectedTarget)
-		connectedTargets.remove(identifier);
+      {
+		if (connectedTargets.remove(identifier) == null)
+         System.err.println (user.getName()+" not in connected list.");
+      }
 }
 public void replaceUser(String identifier, Target user) throws CollisionException {
 	identifier = IrcdConfiguration.getInstance().getUserNormalizer().normalise(identifier);

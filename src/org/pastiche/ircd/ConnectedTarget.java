@@ -19,20 +19,44 @@ public abstract class ConnectedTarget implements Target {
 
 public void processCommand(String line) {
 	Command command = getCommandFactory().createCommand(line);
-	if (command != null) {
+	if (command != null)
+	   {
 		command.setImmediateSource(this);
 		command.preProcess();
-		if (command.requiresProcess()) {
+		if (command.requiresProcess())
+		   {
 			CommandQueue.getInstance().add(command);
-		}
-		if (command.isIdleCountResetter()) {
+		   }
+
+		if (command.isIdleCountResetter())
+		   {
 			resetIdleCount();
-		}
+		   }
+
 		resetLastCommandTime();
-	}
+	   }
 }
 
+class SendCommand extends org.pastiche.ircd.Command
+   {
+   String message;
+
+   public SendCommand (String str)
+      {
+      message = str;
+      }
+
+   public void process ()
+      {
+   	if (!connection.isDisconnected()) {
+   		System.out.println("Sending to " + getName() + ": " + message);
+   		connection.send(message);
+   	}
+      }
+   }
+
 private void send(String message) {
+//	CommandQueue.getInstance().add(new SendCommand (message));
 	if (!connection.isDisconnected()) {
 		System.out.println("Sending to " + getName() + ": " + message);
 		connection.send(message);
@@ -66,6 +90,10 @@ public ConnectedTarget(Server server, Connection connection) {
 }
 
 public boolean canSend(Target source) {
+   if (source == this)
+      System.out.println ("Can you send to yourself");
+
+   System.out.println ("canSend: this.getName () = "+getName ()+" source.name = "+getName ());
 	return true;
 }
 

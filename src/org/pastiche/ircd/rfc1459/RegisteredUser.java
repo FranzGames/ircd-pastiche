@@ -21,7 +21,7 @@ package org.pastiche.ircd.rfc1459;
 
 import org.pastiche.ircd.Target;
 import org.pastiche.ircd.Server;
- 
+
 /**
  * After an UnregisteredClient has supplied a USER and NICK command,
  * it is passed to the constructor of the ConnectedUser.
@@ -38,31 +38,53 @@ public class RegisteredUser extends org.pastiche.ircd.ConnectedTarget {
 
 	private org.pastiche.ircd.Command disconnect = new org.pastiche.ircd.Command() {
 		public void process() {
+//      Channel[] chans = getChannels ();
+
 			java.util.Iterator i = getVisibleLocalTargets().iterator();
+
+/*         if (chans != null)
+            {
+            for (int j = 0; j < chans.length; j++)
+               {
+               try
+                  {
+                  System.out.println ("chan = "+chans[j].getName ());
+                  chans[j].remove (RegisteredUser.this);
+                  }
+               catch (org.pastiche.ircd.NotOnChannelException t)
+                  {
+                  }
+               }
+            }*/
 
 			while (i.hasNext()) {
 				((Target)i.next()).send(RegisteredUser.this, "QUIT :" + disconnectReason);
 			}
 
-			i = myChannels.iterator();
+         synchronized (myChannels)
+            {
+   			i = myChannels.iterator();
 
-			while (i.hasNext()) {
-				try {
-					((Channel)i.next()).remove(RegisteredUser.this);
-				} catch (org.pastiche.ircd.NotOnChannelException noce) {
-				}
+   			while (i.hasNext()) {
+   				try {
+                  Channel chan = (Channel)i.next();
+                  System.out.println ("chan = "+chan.getName ());
+   					chan.remove(RegisteredUser.this);
+   				} catch (org.pastiche.ircd.NotOnChannelException noce) {
+   				}
+            }
 			}
-			
-			getServer().removeUser(RegisteredUser.this);			
+
+			getServer().removeUser(RegisteredUser.this);
 		}
 	};
 public RegisteredUser(UnregisteredClient initialConnection) {
 	super(initialConnection.getServer(), initialConnection.getConnection());
 	initialConnection.remove();
-	
+
 	System.out.println("User connected: " + initialConnection.getNick());
 
-	super.getConnection().setOwner(this);	
+	super.getConnection().setOwner(this);
 	this.nick = initialConnection.getNick();
 	this.username = initialConnection.getUsername();
 	this.hostname = initialConnection.getHostname();
@@ -71,10 +93,20 @@ public RegisteredUser(UnregisteredClient initialConnection) {
 	super.setConnection(initialConnection.getConnection());
 }
 public void addChannel(Channel channel) {
-	myChannels.add(channel);
+   synchronized (myChannels)
+      {
+	   myChannels.add(channel);
+      }
 }
 /** Does this belong elsewhere? */
 public static RegisteredUser convertToRegisteredUser(UnregisteredClient user) {
+   Target targ = user.getServer ().getUser (user.getName ());
+
+   // Has the UnregisterClient become a registered client will on
+   // the command queue?
+   if (targ != null && targ != user)
+      return (RegisteredUser) targ;
+
 	RegisteredUser registeredUser = new RegisteredUser(user);
 	registeredUser.getServer().replaceUser(registeredUser);
 
@@ -98,9 +130,13 @@ protected void doDisconnect(String reason) {
 	org.pastiche.ircd.CommandQueue.getInstance().add(disconnect);
 }
 public Channel[] getChannels() {
-	Channel[] channels = new Channel[myChannels.size()];
-	myChannels.toArray(channels);
-	return channels;
+   synchronized (myChannels)
+      {
+   	Channel[] channels = new Channel[myChannels.size()];
+   	myChannels.toArray(channels);
+
+	   return channels;
+      }
 }
 public org.pastiche.ircd.CommandFactory getCommandFactory() {
 	return org.pastiche.ircd.CommandFactory.getCommandFactory(COMMAND_FACTORY_ID);
@@ -136,14 +172,16 @@ public String getUsername() {
  * getVisibleLocalTargets method comment.
  */
 public java.util.Set getVisibleLocalTargets() {
-	java.util.Set targets = new java.util.HashSet();
-	java.util.Iterator i = myChannels.iterator();
+   synchronized (myChannels)
+      {
+   	java.util.Set targets = new java.util.HashSet();
+   	java.util.Iterator i = myChannels.iterator();
 
-	while (i.hasNext()) {
-		targets.add(i.next());
-	}
-
+   	while (i.hasNext()) {
+   		targets.add(i.next());
+   	}
 	return targets;
+   }
 }
 /**
  * isDead method comment.
@@ -157,13 +195,26 @@ public boolean isDead() {
 public boolean isIdle() {
 	return false;
 }
-public void part(org.pastiche.ircd.rfc1459.Channel channel, String notifyCommand) 
+public void part(org.pastiche.ircd.rfc1459.Channel channel, String notifyCommand)
 	throws org.pastiche.ircd.NotOnChannelException {
-		
-	channel.remove(this, notifyCommand);
-	myChannels.remove(channel);
+
+   try
+      {
+	   channel.remove(this, notifyCommand);
+      }
+   catch (org.pastiche.ircd.NotOnChannelException e)
+      {
+      throw e;
+      }
+   finally
+      {
+      synchronized (myChannels)
+         {
+	      myChannels.remove(channel);
+         }
+      }
 }
-public void remove() {	
+public void remove() {
 }
 public void setNick(String newNick) throws org.pastiche.ircd.CollisionException {
 	getServer().replaceUser(newNick, this);
@@ -173,7 +224,7 @@ public void setNick(String newNick) throws org.pastiche.ircd.CollisionException 
 	while (i.hasNext()) {
 		((org.pastiche.ircd.Target)i.next()).send(this, "NICK " + newNick);
 	}
-	
+
 	send(this, "NICK " + newNick);
 	this.nick = newNick;
 }
