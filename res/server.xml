@@ -1,0 +1,11 @@
+<server>
+   <name>irc.test.org</name>
+   <description>IRCD Test Server</description>
+   <authenticator>org.pastiche.ircd.SimpleAuthenticator</authenticator>
+   <listener address="127.0.0.1" port="6667" />
+   <listener address="127.0.0.1" port="6668" />
+   <operator name="sysadmin" />
+   <operator name="root" />
+   <dead_client_timeout>120</dead_client_timeout>
+   <unregistered_client_timeout>30</unregistered_client_timeout>
+</server>
