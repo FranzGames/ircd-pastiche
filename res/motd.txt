@@ -1,0 +1,7 @@
+This is an experimental server.
+Most bits of it won't work.
+Use at own risk.
+
+This server is 100% Pure Java and is released under the 
+GNU General Public License. For more information 
+see http://sourceforge.net/projects/ircd-pastiche.
