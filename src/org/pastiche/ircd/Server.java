@@ -19,6 +19,7 @@ package org.pastiche.ircd;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Iterator;
 
@@ -67,7 +68,7 @@ public void addChannel(String identifier, Channel channel) {
 public void addUser(String identifier, Target user) throws CollisionException {
 	identifier = IrcdConfiguration.getInstance().getUserNormalizer().normalise(identifier);
 
-System.out.println ("addUser: id = "+identifier);
+System.out.println ("addUser ("+(new Date())+") : id = "+identifier);
 
 	if (networkUsers.containsKey(identifier))
 		throw new CollisionException();
@@ -200,7 +201,7 @@ public void removeChannel(Channel channel) {
 public void removeUser(Target user) {
 	String identifier = IrcdConfiguration.getInstance().getUserNormalizer().normalise(user.getName());
 
-System.out.println ("removeUser: id = "+identifier);
+System.out.println ("removeUser ("+(new Date())+") : id = "+identifier);
 
 	if (networkUsers.remove(identifier) == null)
       System.err.println (user.getName()+" not in user list.");

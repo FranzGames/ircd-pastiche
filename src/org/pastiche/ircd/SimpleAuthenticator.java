@@ -19,6 +19,10 @@ public class SimpleAuthenticator implements Authenticator
    java.util.Properties props;
    String filename;
 
+   public SimpleAuthenticator ()
+      {
+      this ("nickpass.properties");
+      }
 
    public SimpleAuthenticator (String propFilename)
       {

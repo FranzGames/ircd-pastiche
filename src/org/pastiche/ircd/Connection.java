@@ -19,6 +19,8 @@ package org.pastiche.ircd;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.util.Date;
+
 /**
  * <p>A Connection handles the actual sockety things to do with
  * sending and receiving stuff.
@@ -48,10 +50,10 @@ public void run() {
 			getOwner().processCommand(line);
 		}
       System.out.println ("Disconnect in thread "+Thread.currentThread ().getName ());
-		System.out.println("User disconnected. user = "+getOwner ().getName ());
+		System.out.println("User disconnected. Time = "+(new Date())+" user = "+getOwner ().getName ());
 		getOwner().doDisconnect(disconnectMessage);
 	} catch (java.io.IOException ioe) {
-      System.err.println ("Exception in thread "+Thread.currentThread ().getName ());
+      System.err.println ("Exception in thread "+Thread.currentThread ().getName ()+" Time = "+(new Date()));
 		System.out.println("IOException in user "+getOwner ().getName ()+": " + ioe);
 		getOwner().doDisconnect(ioe);
 	} finally {

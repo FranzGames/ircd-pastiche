@@ -35,6 +35,7 @@ public void preProcess() {
 	}
 
 	source.setIrcname(getArgument(3));
+   getSource().send (getSource ().getServer (), "NOTICE "+source.getUsername()+" :*** Enter your login and password now.");
 }
 /**
  * process method comment.

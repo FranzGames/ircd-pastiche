@@ -18,13 +18,21 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 import org.pastiche.ircd.Target;
 
 /**
  * <p>The PRIVMSG command.
  */
 public class PrivmsgCommand extends MessageCommand {
+
+public PrivmsgCommand ()
+   {
+   super ();
+
+   setIdleCountResetter(true);
+   }
+
 protected String getCommandName() {
 	return "PRIVMSG";
 }

@@ -32,13 +32,13 @@ public class SendQueuer extends Thread
    public void disconnect ()
       {
       setProcessQueue (false);
+      setProcess (false);
 
       // If it is push the null to stop the thread.
       if (queue.isEmpty ())
          queue.push (null);
 
       setProcessQueue (true);
-      process = false;
       }
 
    public synchronized void setProcessQueue (boolean b)
@@ -51,9 +51,20 @@ public class SendQueuer extends Thread
       return processQueue;
       }
 
+   private synchronized void setProcess (boolean b)
+      {
+      process = b;
+      }
+
+   private synchronized boolean process ()
+      {
+      return process;
+      }
+
+
    public void run ()
       {
-      while (process)
+      while (process ())
          {
          if (!processQueue ())
             continue;
