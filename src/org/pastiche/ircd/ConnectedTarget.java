@@ -86,7 +86,7 @@ public boolean canSend(Target source) {
    if (source == this)
       System.out.println ("Can you send to yourself");
 
-   System.out.println ("canSend: this.getName () = "+getName ()+" source.name = "+getName ());
+//   System.out.println ("canSend: this.getName () = "+getName ()+" source.name = "+getName ());
 	return true;
 }
 
