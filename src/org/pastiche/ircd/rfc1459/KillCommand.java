@@ -35,7 +35,7 @@ public class KillCommand extends org.pastiche.ircd.Command
 
    public void preProcess()
       {
-      if (getArgumentCount() < 2)
+      if (getArgumentCount() < 1)
          {
          ErrorHandler.getInstance().needMoreParams(getSource(), getCommandName ());
          requiresProcess = false;
@@ -59,6 +59,11 @@ public class KillCommand extends org.pastiche.ircd.Command
          }
       else
       	ErrorHandler.getInstance().noSuchNick(getSource(), getArgument(0));
+
+      // This is for the case where there is no connection (i.e. the QUIT
+      // command does not work)
+      if (getArgumentCount() == 2 && getArgument(1).equalsIgnoreCase("remove") && target != null)
+         getSource().getServer().removeUser(target);
       }
 
    public boolean requiresProcess()

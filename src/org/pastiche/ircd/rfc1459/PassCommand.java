@@ -28,7 +28,6 @@ public void process() {
       }
 
 	String passwd = getArgument(0);
-
    if (getSource () instanceof UnregisteredClient)
       {
 	   UnregisteredClient source = (UnregisteredClient) getSource();
