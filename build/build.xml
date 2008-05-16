@@ -1,0 +1,53 @@
+<project name="IRCD" default="dist" basedir="..">
+
+  <!-- set global properties for this build -->
+  <property name="src" value="src"/>
+  <property name="res" value="res"/>
+  <property name="build" value="classes"/>
+  <property name="dist"  value="dist"/>
+
+  <path id="build.classpath">
+    <pathelement location="classes" />
+  </path>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac failonerror="false" srcdir="${src}" destdir="${build}" source="1.4" target="1.4" debug="true" classpathref="build.classpath" />
+  </target>
+
+  <target name="dist" depends="compile">
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+    <mkdir dir="${dist}/bin"/>
+    <mkdir dir="${dist}/conf"/>
+
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/lib/ircd.jar" basedir="${build}"/>
+
+    <!-- Copy files to create the bin directory  -->
+    <copy file="${res}/ircd.sh" todir="${dist}/bin"/>
+    <copy file="${res}/ircd.cmd" todir="${dist}/bin"/>
+
+    <!-- Copy files to conf directory  -->
+    <copy todir="${dist}/conf">
+       <fileset dir="${res}"/>
+    </copy>
+
+    <delete file="${dist}/conf/ircd.sh"/>
+    <delete file="${dist}/conf/ircd.cmd"/>
+  </target>
+
+  <target name="clean">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
+
