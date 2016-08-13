@@ -18,16 +18,21 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
- * <p>Abstract superclass of the two numeric handling classes.
+ * <p>
+ * Abstract superclass of the two numeric handling classes.
  */
 public abstract class NumericHandler {
-public NumericHandler() {
-	super();
-}
-/** FIXME: Will break on multi-server networks when sending numeric to remote server */
-protected void sendTo(org.pastiche.ircd.Target target, String numeric, String message) {
-	target.send(target.getServer(),	numeric + " " + target.getName() + " " + message);
-}
+
+   public NumericHandler() {
+      super();
+   }
+
+   /**
+    * FIXME: Will break on multi-server networks when sending numeric to remote
+    * server
+    */
+   protected void sendTo(org.pastiche.ircd.Target target, String numeric, String message) {
+      target.send(target.getServer(), numeric + " " + target.getName() + " " + message);
+   }
 }

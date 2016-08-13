@@ -104,6 +104,10 @@
        	    <handler>org.pastiche.ircd.rfc1459.ListCommand</handler>
        	</command>
        	<command>
+       	    <name>WHO</name>
+       	    <handler>org.pastiche.ircd.rfc1459.WhoCommand</handler>
+       	</command>
+       	<command>
        	    <name>WHOIS</name>
        	    <handler>org.pastiche.ircd.rfc1459.WhoisCommand</handler>
        	</command>

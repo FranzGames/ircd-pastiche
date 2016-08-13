@@ -46,7 +46,7 @@ public void run() {
 				new java.io.InputStreamReader(socket.getInputStream()));
 
 		while (((line = in.readLine()) != null) && !disconnect) {
-//			System.out.println("Rec: " + line);
+			// System.out.println("Rec: " + line);
          try
             {
 			   getOwner().processCommand(line);
