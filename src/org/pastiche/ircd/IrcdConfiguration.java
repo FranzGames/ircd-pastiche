@@ -1,11 +1,10 @@
 package org.pastiche.ircd;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
-import org.pastiche.ircd.debug.Debug;
-import org.pastiche.ircd.debug.DebugIrcdConfiguration;
 import org.pastiche.ircd.rfc1459.UnregisteredClient;
-import org.xml.sax.*;
 import org.w3c.dom.*;
 
 /**
@@ -27,6 +26,7 @@ public class IrcdConfiguration {
    protected int deadClientTimeout = 120;
    protected int unregisteredClientTimeout = 0;
    private Listener[] listeners = null;
+   private Map<String, KeyStoreConfiguration> keystores = new HashMap<String, KeyStoreConfiguration>();
    private String serverName;
    private String description;
    private NameNormalizer serverNormalizer;
@@ -90,6 +90,10 @@ public class IrcdConfiguration {
    public Listener[] getListeners() {
       return listeners;
    }
+   
+   public KeyStoreConfiguration getKeystore (String name) {
+      return keystores.get(name);
+   }
 
    public void loadServerConfiguration(Document doc) {
       NodeList list;
@@ -121,8 +125,21 @@ public class IrcdConfiguration {
             && node.getAttributes().getNamedItem("port") != null) {
             try {
                int port = Integer.valueOf(node.getAttributes().getNamedItem("port").getNodeValue()).intValue();
+               String secure = null;
+               String keyStore = "default";
+               
+               if (node.getAttributes().getNamedItem("secure") != null) {
+                  secure = node.getAttributes().getNamedItem("secure").getNodeValue();
+               }
+               
+               if (node.getAttributes().getNamedItem("keystore_name") != null) {
+                  keyStore = node.getAttributes().getNamedItem("keystore_name").getNodeValue();
+               }
+               
 
-               vec.addElement(new Listener(server, port, node.getAttributes().getNamedItem("address").getNodeValue()));
+               vec.addElement(new Listener(server, port, 
+                  node.getAttributes().getNamedItem("address").getNodeValue(), 
+                  secure, keyStore));
             } catch (Throwable t) {
                t.printStackTrace();
             }
@@ -167,6 +184,31 @@ public class IrcdConfiguration {
             System.err.println("Error interpretting unregistered client timeout setting (" + t + ")");
          }
       }
+      
+      list = doc.getElementsByTagName("truststore");
+
+      for (int i = 0; i < list.getLength(); i++) {
+         Node node = list.item(i);
+
+         if (node.getAttributes().getNamedItem("keystore") != null
+            && node.getAttributes().getNamedItem("password") != null
+            && node.getAttributes().getNamedItem("key_password") != null) {
+            try {
+               String keystore = node.getAttributes().getNamedItem("keystore").getNodeValue();
+               String password = node.getAttributes().getNamedItem("password").getNodeValue();
+               String keyPassword = node.getAttributes().getNamedItem("key_password").getNodeValue();
+               String storetype = node.getAttributes().getNamedItem("type") == null ?
+                  "JKS" : node.getAttributes().getNamedItem("type").getNodeValue();
+               String name = node.getAttributes().getNamedItem("name") == null ?
+                  "default" : node.getAttributes().getNamedItem("name").getNodeValue();
+               
+               keystores.put (name, new KeyStoreConfiguration (keystore, password, keyPassword, storetype));
+               
+            } catch (Throwable t) {
+               t.printStackTrace();
+            }
+         }
+      }      
 
    }
 
