@@ -85,7 +85,7 @@ public abstract class Command implements Cloneable {
 	private Target source = null;
 	private Target immediateSource = null;
 	private Target[] destination = null;
-	private java.util.List args = null;
+	private java.util.List<String> args = null;
 	private String name = null;
 
 public void init() {
@@ -103,7 +103,7 @@ public boolean requiresProcess() {
 
 public void addArgument(String arg) {
 	if (args == null) {
-		args = new java.util.ArrayList(MAX_ARGS);
+		args = new java.util.ArrayList<String>(MAX_ARGS);
 	}
 
 	args.add(arg);
@@ -148,7 +148,7 @@ protected String[] calculateTargets(int argumentPosition, String delim) {
    if (getArguments () == null)
       return new String[0];
 
-	java.util.StringTokenizer tokens = new java.util.StringTokenizer((String)getArguments().get(argumentPosition), delim);
+	java.util.StringTokenizer tokens = new java.util.StringTokenizer(getArguments().get(argumentPosition), delim);
 	String[] targets = new String[tokens.countTokens()];
 
 	for (int i = 0; i < targets.length; i++) {
@@ -157,7 +157,7 @@ protected String[] calculateTargets(int argumentPosition, String delim) {
 
 	return targets;
 }
-protected java.util.List getArguments() {
+protected java.util.List<String> getArguments() {
 	return args;
 }
 protected String getArgument(int index) {

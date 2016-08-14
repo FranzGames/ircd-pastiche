@@ -9,7 +9,7 @@ import org.pastiche.ircd.Target;
 
 /*
  *   Pastiche IRCd - Java Internet Relay Chat
- *   Copyright (C) 2001 Charles Miller
+ *   Copyright (C) 2016 Paul Franz
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,41 +27,9 @@ import org.pastiche.ircd.Target;
  */
 public class WhoCommand extends org.pastiche.ircd.Command {
 
-   private void doWhois(RegisteredUser user) {
-      ReplyHandler.getInstance().whoisUser(getSource(), user.getNick(), user.getUsername(), user.getHostname(), user.getRealName());
-      String[] visibleChannels = getChannels(user);
-
-      if (visibleChannels.length > 0) {
-         ReplyHandler.getInstance().whoisChannels(getSource(), user.getNick(), visibleChannels);
-      }
-
-      if (user.isAway()) {
-         ReplyHandler.getInstance().away(getSource(), user.getNick(), user.getAwayMsg());
-      }
-
-      ReplyHandler.getInstance().whoisServer(getSource(), user.getNick(), user.getServer().getName(), user.getServer().getInfo());
-      ReplyHandler.getInstance().whoisIdle(getSource(), user.getNick(), user.getSecondsIdle());
-      ReplyHandler.getInstance().endOfWhois(getSource());
-   }
-
-   private String[] getChannels(RegisteredUser user) {
-      Channel[] channels = user.getChannels();
-      java.util.List channelStrings = new java.util.ArrayList(channels.length);
-
-      for (int i = 0; i < channels.length; i++) {
-         if (channels[i].isVisible() || channels[i].isOnChannel(getSource())) {
-            channelStrings.add(channels[i].getNickListModifier(user) + channels[i].getName());
-         }
-      }
-
-      String[] visibleChannels = new String[channelStrings.size()];
-      channelStrings.toArray(visibleChannels);
-      return visibleChannels;
-   }
-
    @Override
    public void process() {
-      String query = (String) ((getArguments().size() == 0) ? null : getArguments().get(0));
+      String query = ((getArgumentCount() == 0) ? null : getArguments().get(0));
       Pattern pattern = null;
       boolean onlyOper = false;
 

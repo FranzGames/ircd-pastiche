@@ -104,6 +104,10 @@
        	    <handler>org.pastiche.ircd.rfc1459.ListCommand</handler>
        	</command>
        	<command>
+       	    <name>VERSION</name>
+       	    <handler>org.pastiche.ircd.rfc1459.VersionCommand</handler>
+       	</command>
+       	<command>
        	    <name>WHO</name>
        	    <handler>org.pastiche.ircd.rfc1459.WhoCommand</handler>
        	</command>

@@ -24,7 +24,13 @@ package org.pastiche.ircd.rfc1459;
  * userhost, this all takes place in preProcess().
  */
 public class UserhostCommand extends org.pastiche.ircd.Command {
+@Override
 public void process() {
+   if (getArgumentCount() == 0) {
+      ErrorHandler.getInstance().needMoreParams(getSource(), "USERHOST");
+      return;
+   }
+   
 	// FIXME: needs IRCop and AWAY/HERE notification.
 	java.util.Iterator i = getArguments().iterator();
 	StringBuffer reply = new StringBuffer(getArguments().size() * NickNormalizer.MAX_NICK_LENGTH);
@@ -33,12 +39,17 @@ public void process() {
 			getSource().getServer().getTarget((String)i.next());
 
 		if (found != null) {
-			reply.append(found.getNick() + "=+" + found.getUsername() + "@" + found.getHostname());
+			reply.append(found.getNick());
+			reply.append("=+");
+			reply.append(found.getUsername());
+			reply.append("@");
+			reply.append(found.getHostname());
 		}
 	}
 
 	ReplyHandler.getInstance().userhost(getSource(), reply.toString());
 }
+@Override
 public boolean requiresProcess() {
 	return true;
 }

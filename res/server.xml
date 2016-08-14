@@ -2,8 +2,10 @@
    <name>irc.test.org</name>
    <description>IRCD Test Server</description>
    <authenticator>org.pastiche.ircd.SimpleAuthenticator</authenticator>
+   <truststore keystore="./localhost.jks" password="localhost" key_password="key_local"/>
    <listener address="127.0.0.1" port="6667" />
    <listener address="127.0.0.1" port="6668" />
+   <listener address="127.0.0.1" port="7000" secure="true"/>
    <operator name="sysadmin" />
    <operator name="root" />
    <dead_client_timeout>120</dead_client_timeout>

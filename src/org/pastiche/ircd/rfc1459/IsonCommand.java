@@ -24,7 +24,13 @@ import org.pastiche.ircd.Command;
  * <p>The Ison command.
  */
 public class IsonCommand extends Command {
+@Override
 public void process() {
+   if (getArgumentCount() == 0) {
+      ErrorHandler.getInstance().needMoreParams(getSource(), "ISON");
+      return;
+   }
+   
 	java.util.Iterator i = getArguments().iterator();
 	StringBuffer reply = new StringBuffer(getArguments().size() * NickNormalizer.MAX_NICK_LENGTH);
 	while (i.hasNext()) {
@@ -32,12 +38,14 @@ public void process() {
 			getSource().getServer().getTarget((String)i.next());
 
 		if (found != null) {
-			reply.append(found.getName() + " ");
+			reply.append(found.getName());
+			reply.append(" ");
 		}
 	}
 
 	ReplyHandler.getInstance().ison(getSource(), reply.toString());
 }
+@Override
 public boolean requiresProcess() {
 	return true;
 }

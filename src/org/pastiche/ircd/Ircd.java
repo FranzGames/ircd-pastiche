@@ -33,7 +33,12 @@ import org.w3c.dom.*;
 public class Ircd {
 public static int port = 6667;
 public static String server = "localhost";
-//public static String server = "207.44.130.15";
+public static final String productName = "Pastiche";
+public static final String version = "0.5";
+
+public static String getVersion () {
+   return productName+"-"+version;
+}
 
 public static void main(String[] args) {
 

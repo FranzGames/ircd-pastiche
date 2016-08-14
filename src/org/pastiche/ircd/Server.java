@@ -138,9 +138,10 @@ public String getName() {
 	return IrcdConfiguration.getInstance().getServerName();
 }
 public String getNetworkName() {
-	return networkName;
+	return IrcdConfiguration.getInstance().getNetworkName();
 }
-/** This method should never be called :) */
+/** This method should never be called :)
+    * @return  */
 public Server getServer() {
 	return this;
 }
@@ -187,6 +188,7 @@ public java.util.Iterator getUsersMatching(Mask mask) {
 }
 /**
  * getVisibleLocalTargets method comment.
+    * @return 
  */
 public java.util.Set getVisibleLocalTargets() {
 	return connectedTargets.entrySet();

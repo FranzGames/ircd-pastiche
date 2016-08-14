@@ -28,6 +28,7 @@ public class IrcdConfiguration {
    private Listener[] listeners = null;
    private Map<String, KeyStoreConfiguration> keystores = new HashMap<String, KeyStoreConfiguration>();
    private String serverName;
+   private String networkName = "pastiche";
    private String description;
    private NameNormalizer serverNormalizer;
    private NameNormalizer channelNormalizer;
@@ -164,6 +165,10 @@ public class IrcdConfiguration {
       }
 
       serverName = getNodeValue(doc, "name");
+      if (getNodeValue(doc, "network") != null) {
+         networkName = getNodeValue(doc, "network");
+      }
+      
       description = getNodeValue(doc, "description");
       String value = getNodeValue(doc, "dead_client_timeout");
 
@@ -432,6 +437,10 @@ public class IrcdConfiguration {
 
    public String getServerName() {
       return serverName;
+   }
+   
+   public String getNetworkName() {
+      return networkName;
    }
 
    public int getUnregisteredClientTimeout() {

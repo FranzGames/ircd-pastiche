@@ -52,6 +52,7 @@ private boolean isMask(String s) {
 	return (s.indexOf("*") != -1) ||
 	(s.indexOf("?") != -1);
 }
+@Override
 public void process() {
 	java.util.Iterator i = getArguments().iterator();
 	
@@ -77,6 +78,7 @@ public void process() {
 		}
 	}
 }
+@Override
 public boolean requiresProcess() {
 	return true;
 }

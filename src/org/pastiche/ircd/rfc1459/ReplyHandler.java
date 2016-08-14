@@ -178,7 +178,11 @@ public void whoisUser(Target source, String nick, String user, String host, Stri
 	sendTo(source, "311", nick + " " + user + " " + host + " * :" + realName);
 }
 public void who(Target source, Channel channel, Server server, String nick, String user, String host, String realName, String op) {
-	sendTo(source, "352", channel.getName ()+" "+ user + " " + host + " "+server.getNetworkName()+" "+nick+" "+op+" :0 " + realName);
+	sendTo(source, "352", channel.getName ()+" "+ user + " " + host + " "+server.getName()+" "+nick+" "+op+" :0 " + realName);
+}
+
+public void version(Target source, String version, Server server, String comments) {
+	sendTo(source, "351", version + " "+server.getName()+" : " + comments);
 }
 
 public void yourHost (Server server, Target target) {
