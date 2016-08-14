@@ -1,5 +1,6 @@
 <server>
-   <name>irc.test.org</name>
+   <name>localhostg</name>
+   <network>Pastiche</network>
    <description>IRCD Test Server</description>
    <authenticator>org.pastiche.ircd.SimpleAuthenticator</authenticator>
    <truststore keystore="./localhost.jks" password="localhost" key_password="key_local"/>
