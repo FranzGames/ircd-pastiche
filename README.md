@@ -32,8 +32,8 @@ Extract the release file. Edit the server.xml for your configuration
 
 ## Authors
 
-[Charles Miller](https://sourceforge.net/u/carlfish/profile/) - Initial work on the IRC server
-Paul Franz - Took over development 2003-05-29
+* [Charles Miller](https://sourceforge.net/u/carlfish/profile/) - Initial work on the IRC server
+* Paul Franz - Took over development 2003-05-29
 
 ## License
 
