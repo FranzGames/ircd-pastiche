@@ -48,6 +48,14 @@
        	    <handler>org.pastiche.ircd.rfc1459.NoticeCommand</handler>
        	</command>
        	<command>
+       	    <name>LINKS</name>
+       	    <handler>org.pastiche.ircd.rfc1459.LinksCommand</handler>
+       	</command>
+       	<command>
+       	    <name>INFO</name>
+       	    <handler>org.pastiche.ircd.rfc1459.InfoCommand</handler>
+       	</command>
+       	<command>
        	    <name>ISON</name>
        	    <handler>org.pastiche.ircd.rfc1459.IsonCommand</handler>
        	</command>
@@ -102,6 +110,10 @@
        	<command>
        	    <name>LIST</name>
        	    <handler>org.pastiche.ircd.rfc1459.ListCommand</handler>
+       	</command>
+       	<command>
+       	    <name>TIME</name>
+       	    <handler>org.pastiche.ircd.rfc1459.TimeCommand</handler>
        	</command>
        	<command>
        	    <name>VERSION</name>

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.pastiche.ircd.Command;
 import org.pastiche.ircd.Target;
 
 /*
@@ -45,24 +46,8 @@ public class WhoCommand extends org.pastiche.ircd.Command {
       // If the query does not begin with a pound sign (i.e. "#"), 
       // then it is a generic query on user information.
       if (query != null && !query.startsWith("#")) {
-         StringBuilder builder = new StringBuilder();
-         builder.append("^");
+         pattern = Command.createPattern(query);
 
-         for (int i = 0; i < query.length(); i++) {
-            char ch = query.charAt(i);
-
-            if (ch == '.') {
-               builder.append("\\.");
-            } else if (ch == '*') {
-               builder.append(".*");
-            } else {
-               builder.append(ch);
-            }
-         }
-         
-         builder.append("$");
-
-         pattern = Pattern.compile(builder.toString());
          //Null out so that all rooms are selected.
          query = null;
       }

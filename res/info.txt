@@ -1,0 +1,8 @@
+     IRCd Pastiche
+   Simple IRC Server
+
+Core Developers:
+   Paul Franz
+   Charles Miller
+
+

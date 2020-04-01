@@ -68,6 +68,23 @@ public static ReplyHandler getInstance() {
 public void ison(Target target, String onlineNicks) {
 	sendTo(target, "303", ":" + onlineNicks);
 }
+
+public void info(Target target, String info) {
+	sendTo(target, "370", ":" + info);
+}
+
+public void endOfInfo(Target target) {
+	sendTo(target, "374", ":End of /INFO list");
+}
+
+public void links(Target source, String mask, Server server, String hopCount) {
+	sendTo(source, "364", mask + " " + server.getName() + " :" + hopCount + " " + server.getInfo());
+}
+
+public void endOfLinks(Target target, String mask) {
+	sendTo(target, "365", mask+" :End of /LINKS list");
+}
+
 public void list (Target target, String channelName, int memberCount, String topic) {
 	StringBuffer reply = new StringBuffer(channelName + " " + memberCount + " :");
 
@@ -135,6 +152,11 @@ public void names (Target target, Channel channel, Target[] names) {
 public void namesEnd(Target target, String channelNames) {
 	sendTo(target, "366", channelNames + " :End of /NAMES list.");
 }
+
+public void time(Target source, Server server, String time) {
+	sendTo(source, "391", server.getName()+" : " + time);
+}
+
 public void topic(Target target, Channel channel) {
 	if (channel.getTopic() == null) {
 		sendTo(target, "331", channel.getName() + " :No topic is set");
