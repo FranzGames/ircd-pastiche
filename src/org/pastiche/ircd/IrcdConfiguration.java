@@ -1,5 +1,6 @@
 package org.pastiche.ircd;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -206,8 +207,14 @@ public class IrcdConfiguration {
                   "JKS" : node.getAttributes().getNamedItem("type").getNodeValue();
                String name = node.getAttributes().getNamedItem("name") == null ?
                   "default" : node.getAttributes().getNamedItem("name").getNodeValue();
-               
-               keystores.put (name, new KeyStoreConfiguration (keystore, password, keyPassword, storetype));
+              
+	       File keyFile = new File (keystore);
+
+	       if (keyFile.exists()) { 
+                  keystores.put (name, new KeyStoreConfiguration (keystore, password, keyPassword, storetype));
+	       } else {
+		  System.err.println ("Keystore "+keystore+" is missing. Skipped.");
+	       }
                
             } catch (Throwable t) {
                t.printStackTrace();
