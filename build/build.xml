@@ -32,8 +32,9 @@
     <jar jarfile="${dist}/lib/ircd.jar" basedir="${build}"/>
 
     <!-- Copy files to create the bin directory  -->
-    <copy file="${res}/ircd.sh" todir="${dist}/bin"/>
     <copy file="${res}/ircd.cmd" todir="${dist}/bin"/>
+    <copy file="${res}/ircd.sh" todir="${dist}/bin"/>
+    <chmod file="${dist}/bin/ircd.sh" perm="+x"/>
 
     <!-- Copy files to conf directory  -->
     <copy todir="${dist}/conf">

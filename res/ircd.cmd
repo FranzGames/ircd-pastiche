@@ -1,1 +1,1 @@
-java -cp ..\lib\ircd.jar;..\conf org.pastiche.ircd.Ircd
+java -cp ..\lib\ircd.jar org.pastiche.ircd.Ircd ..\conf

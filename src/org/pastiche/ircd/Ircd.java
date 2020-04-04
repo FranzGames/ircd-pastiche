@@ -42,12 +42,25 @@ public static String getVersion () {
 
 public static void main(String[] args) {
 
+	if (args.length == 0) {
+		System.out.println ("Please specify the configuration directory");
+		System.out.println ("Ircd <configuration directory>");
+		System.exit (127);
+	}
+
+	File configDir = new File (args[0]);
+
+	if (!configDir.exists()) {
+		System.out.println ("The configuraiton directory "+args[0]+" is missing");
+		System.exit (127);
+	}
+
 	System.out.print("Loading configuration...");
    Document doc = null, serverConfig = null;
 
    try
       {
-      doc = loadDocument ("config.xml");
+      doc = loadDocument (new File (configDir,"config.xml"));
       }
    catch (FileNotFoundException fnf)
       {
@@ -68,7 +81,7 @@ public static void main(String[] args) {
 
    try
       {
-      serverConfig = loadDocument ("server.xml");
+      serverConfig = loadDocument (new File (configDir,"server.xml"));
       }
    catch (FileNotFoundException fnf)
       {
@@ -108,14 +121,13 @@ public static void main(String[] args) {
 	}
 }
 
-protected static Document loadDocument (String filename) throws FileNotFoundException, SAXParseException
+protected static Document loadDocument (File file) throws FileNotFoundException, SAXParseException
    {
    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
    Document document = null;
-   File file = new File(filename);
 
    if (!file.exists ())
-      throw new FileNotFoundException (filename);
+      throw new FileNotFoundException (file.getPath());
 
    try
       {
