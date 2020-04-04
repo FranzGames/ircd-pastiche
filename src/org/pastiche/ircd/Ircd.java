@@ -102,7 +102,7 @@ public static void main(String[] args) {
 
 	try {
       IrcdConfiguration.getInstance().loadCommandConfiguration (doc);
-      IrcdConfiguration.getInstance().loadServerConfiguration (serverConfig);
+      IrcdConfiguration.getInstance().loadServerConfiguration (configDir, serverConfig);
 		IrcdConfiguration.getInstance().checkConfiguration();
 	} catch (ConfigurationException ce) {
 		System.out.println("failed");

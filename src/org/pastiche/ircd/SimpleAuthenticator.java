@@ -21,8 +21,12 @@ public class SimpleAuthenticator implements Authenticator
 
    public SimpleAuthenticator ()
       {
-      this ("nickpass.properties");
+      this (new File (IrcdConfiguration.getInstance().getConfigurationDirectory(), "nickpass.properties"));
       }
+
+   public SimpleAuthenticator (File file) {
+      this(file.getPath());
+   }
 
    public SimpleAuthenticator (String propFilename)
       {

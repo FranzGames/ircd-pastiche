@@ -28,6 +28,7 @@ public class IrcdConfiguration {
    protected int unregisteredClientTimeout = 0;
    private Listener[] listeners = null;
    private Map<String, KeyStoreConfiguration> keystores = new HashMap<String, KeyStoreConfiguration>();
+   private File configDir;
    private String serverName;
    private String networkName = "pastiche";
    private String description;
@@ -89,6 +90,10 @@ public class IrcdConfiguration {
       }
    }
 
+   public File getConfigurationDirectory () {
+      return configDir;
+   }
+
    public Listener[] getListeners() {
       return listeners;
    }
@@ -97,12 +102,14 @@ public class IrcdConfiguration {
       return keystores.get(name);
    }
 
-   public void loadServerConfiguration(Document doc) {
+   public void loadServerConfiguration(File dir,Document doc) {
       NodeList list;
       Vector vec = new Vector();
       Server server;
       String channelName = getNodeValue(doc, "channel-class");
 
+      configDir = dir;
+      
       authenticator = createAuthenticator(getNodeValue(doc, "authenticator"));
       server = createServer(getNodeValue(doc, "server-class"));
       
@@ -210,8 +217,12 @@ public class IrcdConfiguration {
               
 	       File keyFile = new File (keystore);
 
+	       if (!keystore.startsWith(File.separator)) {
+		   keyFile = new File (this.getConfigurationDirectory(), keystore);
+	       }
+
 	       if (keyFile.exists()) { 
-                  keystores.put (name, new KeyStoreConfiguration (keystore, password, keyPassword, storetype));
+                  keystores.put (name, new KeyStoreConfiguration (keyFile.getPath(), password, keyPassword, storetype));
 	       } else {
 		  System.err.println ("Keystore "+keystore+" is missing. Skipped.");
 	       }
