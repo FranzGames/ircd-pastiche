@@ -6,7 +6,7 @@ A Simple IRCD written in Java, for ease of adding custom code and allow better p
 
 ### Prerequisites
 
-Java 6 or later. (Yeah. It will run on really old JVM)
+Java 8 or later. 
 
 ### Installing
 
