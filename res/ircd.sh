@@ -5,8 +5,8 @@ if [ -z $PASTICHE_IRCD_HOME ]; then
 fi
 
 if [ -z $JAVA_HOME ]; then
-   java -cp $PASTICHE_IRCD_HOME/lib/ircd.jar org.pastiche.ircd.Ircd $PASTICHE_IRCD_HOME/conf
+   java $JAVA_OPTS -cp $PASTICHE_IRCD_HOME/lib/ircd.jar org.pastiche.ircd.Ircd $PASTICHE_IRCD_HOME/conf
 else
-   $JAVA_HOME/bin/java -cp $PASTICHE_IRCD_HOME/lib/ircd.jar org.pastiche.ircd.Ircd $PASTICHE_IRCD_HOME/conf
+   $JAVA_HOME/bin/java $JAVA_OPTS -cp $PASTICHE_IRCD_HOME/lib/ircd.jar org.pastiche.ircd.Ircd $PASTICHE_IRCD_HOME/conf
 fi
 
