@@ -125,6 +125,7 @@ public Channel getChannel(String identifier) {
 public java.util.Iterator getChannels() {
 	return channels.values().iterator();
 }
+
 public String getInfo() {
 	return IrcdConfiguration.getInstance().getFullServerName();
 }

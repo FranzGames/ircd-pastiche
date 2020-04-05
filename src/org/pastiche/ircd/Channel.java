@@ -107,7 +107,6 @@ public abstract class Channel implements Target {
    }
 
    public void send(Target source, String command) {
-//System.out.println ("Channel:send : command = "+command);      
       synchronized (members) {
          java.util.Iterator i = members.iterator();
 
@@ -115,7 +114,6 @@ public abstract class Channel implements Target {
             Target target = (Target) i.next();
             if (target != source) {
                if (!target.getName().equals(source.getName())) {
-                  //System.out.println ("   sendTo: "+target.getName());      
                   target.send(source, command);
                } else {
                   System.out.println("Target same as source. This shouldn't happen. Target = " + target.getName());

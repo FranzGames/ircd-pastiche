@@ -19,8 +19,9 @@ package org.pastiche.ircd.rfc1459;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import org.pastiche.ircd.Target;
+import org.pastiche.ircd.Connection;
 import org.pastiche.ircd.Server;
+import org.pastiche.ircd.Target;
 
 /**
  * After an UnregisteredClient has supplied a USER and NICK command,
@@ -93,6 +94,21 @@ public RegisteredUser(UnregisteredClient initialConnection) {
 	this.lastUnidle = System.currentTimeMillis();
 	super.setConnection(initialConnection.getConnection());
 }
+
+public RegisteredUser(Server server, Connection initialConnection, String nick, String hostname, 
+   String userName, String ircName) {
+	super(server, initialConnection);
+
+	System.out.println("User connected: " + nick);
+
+	super.getConnection().setOwner(this);
+	this.nick = nick;
+	this.username = userName;
+	this.hostname = hostname;
+	this.realName = ircName;
+	this.lastUnidle = System.currentTimeMillis();
+}
+
 public void addChannel(Channel channel) {
    synchronized (myChannels)
       {
@@ -111,14 +127,19 @@ public static RegisteredUser convertToRegisteredUser(UnregisteredClient user) {
 	RegisteredUser registeredUser = new RegisteredUser(user);
 	registeredUser.getServer().replaceUser(registeredUser);
 
-	ReplyHandler.getInstance().welcome(registeredUser.getServer(), registeredUser);
-	ReplyHandler.getInstance().yourHost(registeredUser.getServer(), registeredUser);
-	ReplyHandler.getInstance().created(registeredUser);
-	ReplyHandler.getInstance().myInfo(registeredUser.getServer(), registeredUser);
-	registeredUser.processCommand("LUSERS");
-	registeredUser.processCommand("MOTD");
+   registeredUser.sendWelcomeMessages();
 	return registeredUser;
 }
+
+public void sendWelcomeMessages () {
+	ReplyHandler.getInstance().welcome(getServer(), this);
+	ReplyHandler.getInstance().yourHost(getServer(), this);
+	ReplyHandler.getInstance().created(this);
+	ReplyHandler.getInstance().myInfo(getServer(), this);
+	processCommand("LUSERS");
+	processCommand("MOTD");
+}
+
 protected void doDisconnect(Exception error) {
 	doDisconnect(error.getMessage());
 }

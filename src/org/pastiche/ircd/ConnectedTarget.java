@@ -1,10 +1,6 @@
 package org.pastiche.ircd;
 
 import java.net.Socket;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
 
 /**
  * <p>
@@ -35,12 +31,14 @@ public abstract class ConnectedTarget implements Target {
 
    protected void send(String message) {
       if (!connection.isDisconnected()) {
+//         System.out.println ("Msg: "+message);
          connection.send(message);
       }
    }
 
    protected void sendPriority(String message) {
       if (!connection.isDisconnected()) {
+//         System.out.println ("Priority Msg: "+message);
          connection.sendPriority(message);
       }
    }
@@ -69,7 +67,7 @@ public abstract class ConnectedTarget implements Target {
 
    public ConnectedTarget(Server server, Socket socket) {
       this(server);
-      this.connection = new Connection(this, socket);
+      this.connection = new SocketConnection(this, socket);
    }
 
    public ConnectedTarget(Server server, Connection connection) {

@@ -1,0 +1,5 @@
+Manifest-Version: 1.0 
+Main-Class: org.pastiche.ircd.Ircd
+Created-By: 1.8
+Class-Path: libs/json-simple-1.1.1.jar
+

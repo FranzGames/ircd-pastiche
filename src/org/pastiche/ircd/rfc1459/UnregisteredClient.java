@@ -7,6 +7,7 @@ import org.pastiche.ircd.Command;
 import org.pastiche.ircd.CommandFactory;
 import org.pastiche.ircd.CommandQueue;
 import org.pastiche.ircd.ConnectedTarget;
+import org.pastiche.ircd.Connection;
 
 /**
  * An UnregisteredClient is a local connection that has not yet registered
@@ -62,6 +63,19 @@ public UnregisteredClient(Server server, Socket socket) {
 		super.send(server, "NOTICE AUTH :Hostname found."); 
 	}
 }
+
+public UnregisteredClient(Server server, Connection conn, String hostname) {
+	super(server, conn);
+	this.timeConnected = new java.util.Date();
+		super.send(server, "NOTICE AUTH :Looking up your hostname..."); 
+	this.hostname = hostname;
+	if (Character.isDigit(this.hostname.charAt(this.hostname.length() - 1))) {
+		super.send(server, "NOTICE AUTH :Hostname not found."); 
+	} else {
+		super.send(server, "NOTICE AUTH :Hostname found."); 
+	}
+}
+
 
 /**
  * Insert the method's description here.

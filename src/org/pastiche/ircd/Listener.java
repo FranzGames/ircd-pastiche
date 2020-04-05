@@ -77,7 +77,7 @@ public class Listener implements Runnable {
             Socket conn = sock.accept();
             connNo++;
             ConnectedTarget client = ConnectedTarget.newConnectedClient(server, conn);
-            new Thread(client.getConnection(), "Connection #" + connNo).start();
+            new Thread((SocketConnection)client.getConnection(), "Connection #" + connNo).start();
          } catch (java.io.IOException ioe) {
             // FIXME: Alert scheme, remove Listener from configuration.
             System.out.println("Could not accept connection on Listener " + this);

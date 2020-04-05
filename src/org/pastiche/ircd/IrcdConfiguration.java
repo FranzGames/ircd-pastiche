@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import org.pastiche.ircd.http.ServerConfiguration;
 import org.pastiche.ircd.rfc1459.UnregisteredClient;
 import org.w3c.dom.*;
 
@@ -27,6 +28,7 @@ public class IrcdConfiguration {
    protected int deadClientTimeout = 120;
    protected int unregisteredClientTimeout = 0;
    private Listener[] listeners = null;
+   private ServerConfiguration[] httpServers = null;
    private Map<String, KeyStoreConfiguration> keystores = new HashMap<String, KeyStoreConfiguration>();
    private File configDir;
    private String serverName;
@@ -38,6 +40,7 @@ public class IrcdConfiguration {
    private Class initialConnectionClass;
    private Class channelClass;
    private ArrayList operators = new ArrayList();
+   private Server server;
 
    public static IrcdConfiguration getInstance() {
       if (instance == null) {
@@ -101,11 +104,14 @@ public class IrcdConfiguration {
    public KeyStoreConfiguration getKeystore (String name) {
       return keystores.get(name);
    }
+   
+   public Server getServer() {
+      return server;
+   }
 
    public void loadServerConfiguration(File dir,Document doc) {
       NodeList list;
       Vector vec = new Vector();
-      Server server;
       String channelName = getNodeValue(doc, "channel-class");
 
       configDir = dir;
@@ -157,6 +163,41 @@ public class IrcdConfiguration {
 
       listeners = new Listener[vec.size()];
       vec.copyInto(listeners);
+      
+      vec.setSize(0);
+      
+      list = doc.getElementsByTagName("http-listener");
+
+      for (int i = 0; i < list.getLength(); i++) {
+         Node node = list.item(i);
+
+         if (node.getAttributes().getNamedItem("address") != null
+            && node.getAttributes().getNamedItem("port") != null) {
+            try {
+               int port = Integer.valueOf(node.getAttributes().getNamedItem("port").getNodeValue()).intValue();
+               String secure = null;
+               String keyStore = "default";
+               String host = node.getAttributes().getNamedItem("address").getNodeValue();
+               
+               if (node.getAttributes().getNamedItem("secure") != null) {
+                  secure = node.getAttributes().getNamedItem("secure").getNodeValue();
+               }
+               
+               if (node.getAttributes().getNamedItem("keystore_name") != null) {
+                  keyStore = node.getAttributes().getNamedItem("keystore_name").getNodeValue();
+               }
+               
+
+               vec.addElement(new ServerConfiguration(host, port, secure, keyStore));
+            } catch (Throwable t) {
+               t.printStackTrace();
+            }
+         }
+      }
+
+      httpServers = new ServerConfiguration[vec.size()];
+      vec.copyInto(httpServers);
+      
 
       list = doc.getElementsByTagName("operator");
 
@@ -459,6 +500,10 @@ public class IrcdConfiguration {
    
    public String getNetworkName() {
       return networkName;
+   }
+   
+   public ServerConfiguration[] getHttpServers () {
+      return httpServers;
    }
 
    public int getUnregisteredClientTimeout() {

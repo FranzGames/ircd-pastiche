@@ -20,8 +20,6 @@ package org.pastiche.ircd.rfc1459;
  */
 
 import org.pastiche.ircd.Command;
-import org.pastiche.ircd.CommandFactory;
-import org.pastiche.ircd.CommandQueue;
 
 public class UnregisteredUserCommand extends Command {
 /**

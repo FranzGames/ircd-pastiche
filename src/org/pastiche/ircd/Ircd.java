@@ -2,6 +2,7 @@ package org.pastiche.ircd;
 
 import java.io.*;
 import javax.xml.parsers.*;
+import org.pastiche.ircd.http.ServerConfiguration;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 
@@ -119,6 +120,14 @@ public static void main(String[] args) {
 		new Thread(IrcdConfiguration.getInstance().getListeners()[i], "Connection Listener Port "+IrcdConfiguration.getInstance().getListeners()[i].getPort ()).start();
 		System.out.println("done.");
 	}
+
+	System.out.println("Starting Http Servers:");
+   ServerConfiguration[] httpServers = IrcdConfiguration.getInstance().getHttpServers();
+System.out.println ("Number of listeners = "+httpServers.length);
+	for (int i = 0; i < httpServers.length; i++) {
+      new org.pastiche.ircd.http.Server (IrcdConfiguration.getInstance().getServer(),httpServers[i]).start();
+   }
+   
 }
 
 protected static Document loadDocument (File file) throws FileNotFoundException, SAXParseException

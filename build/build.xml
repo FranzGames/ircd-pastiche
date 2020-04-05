@@ -5,9 +5,15 @@
   <property name="res" value="res"/>
   <property name="build" value="classes"/>
   <property name="dist"  value="dist"/>
+  <property name="lib"  value="lib"/>
 
   <path id="build.classpath">
     <pathelement location="classes" />
+     <fileset dir="${lib}" casesensitive="yes" >
+      <patternset id="jars" >
+        <include name="**/*.jar"/>
+      </patternset>
+     </fileset>
   </path>
 
   <target name="init">
@@ -24,12 +30,12 @@
 
   <target name="dist" depends="compile">
     <!-- Create the distribution directory -->
-    <mkdir dir="${dist}/lib"/>
+    <mkdir dir="${dist}/lib/libs"/>
     <mkdir dir="${dist}/bin"/>
     <mkdir dir="${dist}/conf"/>
 
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <jar jarfile="${dist}/lib/ircd.jar" basedir="${build}"/>
+    <jar jarfile="${dist}/lib/ircd.jar" basedir="${build}" manifest="build/manifest"/>
 
     <!-- Copy files to create the bin directory  -->
     <copy file="${res}/ircd.cmd" todir="${dist}/bin"/>
@@ -39,6 +45,10 @@
     <!-- Copy files to conf directory  -->
     <copy todir="${dist}/conf">
        <fileset dir="${res}"/>
+    </copy>
+
+    <copy todir="${dist}/lib/libs">
+       <fileset dir="${lib}"/>
     </copy>
 
     <delete file="${dist}/conf/ircd.sh"/>
