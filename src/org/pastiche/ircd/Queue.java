@@ -1,6 +1,6 @@
 package org.pastiche.ircd;
 
-public class Queue extends java.util.Vector
+public class Queue<T> extends java.util.Vector<T>
    {
    public Queue ()
       {
@@ -22,12 +22,12 @@ public class Queue extends java.util.Vector
       setSize (0);
       }
 
-   public synchronized void push (String obj)
+   public synchronized void push (T obj)
       {
       push (obj, false);
       }
 
-   public synchronized void push (String obj, boolean priority)
+   public synchronized void push (T obj, boolean priority)
       {
       if (priority)
          insertElementAt (obj, 0);
@@ -37,7 +37,7 @@ public class Queue extends java.util.Vector
       notifyAll ();
       }
 
-   public synchronized String pop ()
+   public synchronized T pop ()
       {
       try
          {
@@ -50,14 +50,13 @@ public class Queue extends java.util.Vector
          System.err.println (t);
          }
 
-
-      if (size () == 0)
+      if (isEmpty())
          return null;
 
-      Object obj = elementAt (0);
+      T obj = elementAt (0);
 
       removeElementAt (0);
 
-      return (String) obj;
+      return obj;
       }
    }

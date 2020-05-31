@@ -20,7 +20,7 @@ package org.pastiche.ircd;
  */
 public abstract class Channel implements Target {
 
-   private java.util.Set members = new java.util.HashSet();
+   private java.util.Set<Target> members = new java.util.HashSet<Target>();
    private String name = null;
    private Server server = null;
 
@@ -68,7 +68,7 @@ public abstract class Channel implements Target {
       return server;
    }
 
-   public java.util.Set getVisibleLocalTargets() {
+   public java.util.Set<Target> getVisibleLocalTargets() {
       synchronized (members) {
          return members;
       }
@@ -106,12 +106,13 @@ public abstract class Channel implements Target {
       }
    }
 
-   public void send(Target source, String command) {
+   @Override
+   public void send(Target source, IrcMessage command) {
       synchronized (members) {
-         java.util.Iterator i = members.iterator();
+         java.util.Iterator<Target> i = members.iterator();
 
          while (i.hasNext()) {
-            Target target = (Target) i.next();
+            Target target = i.next();
             if (target != source) {
                if (!target.getName().equals(source.getName())) {
                   target.send(source, command);

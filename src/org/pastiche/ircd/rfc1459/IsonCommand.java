@@ -18,35 +18,43 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+import java.util.ArrayList;
+import java.util.List;
 import org.pastiche.ircd.Command;
+
 /**
- * <p>The Ison command.
+ * <p>
+ * The Ison command.
  */
 public class IsonCommand extends Command {
-@Override
-public void process() {
-   if (getArgumentCount() == 0) {
-      ErrorHandler.getInstance().needMoreParams(getSource(), "ISON");
-      return;
+
+   @Override
+   public void process() {
+      if (getArgumentCount() == 0) {
+         ErrorHandler.getInstance().needMoreParams(getSource(), "ISON");
+         return;
+      }
+
+      java.util.Iterator i = getArguments().iterator();
+      List<String> names = new ArrayList<String>();
+
+      while (i.hasNext()) {
+         org.pastiche.ircd.Target found
+                 = getSource().getServer().getTarget((String) i.next());
+
+         if (found != null) {
+            names.add(found.getName());
+         }
+      }
+
+      String[] entries = new String[names.size()];
+      entries = names.toArray(entries);
+      
+      ReplyHandler.getInstance().ison(getSource(), entries);
    }
-   
-	java.util.Iterator i = getArguments().iterator();
-	StringBuffer reply = new StringBuffer(getArguments().size() * NickNormalizer.MAX_NICK_LENGTH);
-	while (i.hasNext()) {
-		org.pastiche.ircd.Target found = 
-			getSource().getServer().getTarget((String)i.next());
 
-		if (found != null) {
-			reply.append(found.getName());
-			reply.append(" ");
-		}
-	}
-
-	ReplyHandler.getInstance().ison(getSource(), reply.toString());
-}
-@Override
-public boolean requiresProcess() {
-	return true;
-}
+   @Override
+   public boolean requiresProcess() {
+      return true;
+   }
 }

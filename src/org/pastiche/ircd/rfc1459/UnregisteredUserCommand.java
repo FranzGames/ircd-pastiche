@@ -18,37 +18,41 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+import org.pastiche.ircd.IrcMessage;
 import org.pastiche.ircd.Command;
 
 public class UnregisteredUserCommand extends Command {
-/**
- * preProcess method comment.
- */
-public void preProcess() {
-	UnregisteredClient source = (UnregisteredClient)getSource();
 
-	if (source.getUsername() == null) {
-		source.setUsername(getArgument(0));
-	}
+   /**
+    * preProcess method comment.
+    */
+   public void preProcess() {
+      UnregisteredClient source = (UnregisteredClient) getSource();
 
-	source.setIrcname(getArgument(3));
-   getSource().send (getSource ().getServer (), "NOTICE "+source.getUsername()+" :*** Enter your login and password now.");
-}
-/**
- * process method comment.
- */
-public void process() {
-	UnregisteredClient source = (UnregisteredClient)getSource();
-	source.setIrcname(getArgument(3));
-	if (source.getNick() != null) {
-		RegisteredUser.convertToRegisteredUser(source);
-	}
-}
-/**
- * requiresProcess method comment.
- */
-public boolean requiresProcess() {
-	return true;
-}
+      if (source.getUsername() == null) {
+         source.setUsername(getArgument(0));
+      }
+
+      source.setIrcname(getArgument(3));
+      TargetIrcMessage msg = new TargetIrcMessage(new IrcMessage("NOTICE", "*** Enter your login and password now."), source.getUsername());
+      getSource().send(getSource().getServer(), msg);
+   }
+
+   /**
+    * process method comment.
+    */
+   public void process() {
+      UnregisteredClient source = (UnregisteredClient) getSource();
+      source.setIrcname(getArgument(3));
+      if (source.getNick() != null) {
+         RegisteredUser.convertToRegisteredUser(source);
+      }
+   }
+
+   /**
+    * requiresProcess method comment.
+    */
+   public boolean requiresProcess() {
+      return true;
+   }
 }

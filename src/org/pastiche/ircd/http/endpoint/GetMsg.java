@@ -13,6 +13,7 @@ import org.pastiche.ircd.http.HttpResult;
 import org.pastiche.ircd.http.Session;
 import org.pastiche.ircd.http.SessionManagement;
 import org.json.simple.JSONObject;
+import org.pastiche.ircd.IrcMessage;
 import org.pastiche.ircd.Queue;
 import org.pastiche.ircd.http.HttpConnection;
 import org.pastiche.ircd.http.Message;
@@ -55,25 +56,19 @@ public class GetMsg extends EndPointProcessor {
       
       StringBuilder buf = new StringBuilder ("{ \"msgs\" : [\r\n");
       
-      Queue q = conn.getSendQueue();
-      List<Message> msgs = new ArrayList<Message>();
+      Queue<IrcMessage> q = conn.getSendQueue();
+      boolean first = true;
       
       while (!q.isEmpty()) {
-         try {
-            Message msg = new Message (q.pop());
-            msgs.add(msg);
-         } catch (ParseException p) {
-            
-         }
-      }
-      
-      for (int i = 0; i < msgs.size();i++) {
-         if (i > 0) {
+         if (!first) {
             buf.append (",");
+         } else {
+            first = false;
          }
          
-         buf.append(msgs.get(i).toJson());
+         buf.append(q.pop().toJson());
       }
+      
       buf.append("]\r\n");
       buf.append("}\r\n");
       

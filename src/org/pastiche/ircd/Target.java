@@ -18,31 +18,31 @@ package org.pastiche.ircd;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
- * <p>A Target is any destination that is the source of, or can
- * be the destination of commands. This includes channels, local and remote
- * users, and directly and indirectly connected servers.
+ * <p>
+ * A Target is any destination that is the source of, or can be the destination
+ * of commands. This includes channels, local and remote users, and directly and
+ * indirectly connected servers.
  */
 public interface Target {
 
-	/* For pinger:
+   /* For pinger:
 	public boolean isIdle();
 	public boolean isDead();
-	*/
-public boolean canSend(Target source);
+    */
+   public boolean canSend(Target source);
 
-public String getLongName();
+   public String getLongName();
 
-public int getMaximumMessageSize(Target source);
+   public int getMaximumMessageSize(Target source);
 
-public String getName();
+   public String getName();
 
-public Server getServer();
+   public Server getServer();
 
-public java.util.Set getVisibleLocalTargets();
+   public java.util.Set<Target> getVisibleLocalTargets();
 
-public void remove();
+   public void remove();
 
-	public void send(Target source, String command);
+   public void send(Target source, IrcMessage command);
 }

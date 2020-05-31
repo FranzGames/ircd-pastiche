@@ -18,7 +18,6 @@ package org.pastiche.ircd;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.util.Date;
 
 /**
  * <p>
@@ -35,8 +34,8 @@ public abstract class Connection {
    /**
     * Shouldn't be called except from within ConnectedTarget.
     */
-   protected abstract void send(String message);
-   protected abstract void sendPriority(String message);
+   protected abstract void send(IrcMessage message);
+   protected abstract void sendPriority(IrcMessage message);
 
    public void disconnect(String disconnectMessage) {
       this.disconnectMessage = (disconnectMessage == null) ? "" : disconnectMessage;

@@ -78,17 +78,19 @@ public class SocketConnection extends Connection implements Runnable {
    /**
     * Shouldn't be called except from within ConnectedTarget.
     */
-   protected void send(String message) {
+   protected void send(IrcMessage message) {
       if (!this.isDisconnected()) {
-         sendQueuer.addMessageToQueue(message);
+         sendQueuer.addMessageToQueue(message.createIrcMessage());
+      }
+     
+   }
+   
+   protected void sendPriority(IrcMessage message) {
+      if (!this.isDisconnected()) {
+         sendQueuer.addPriorityMessageToQueue(message.createIrcMessage());
       }
    }
-
-   protected void sendPriority(String message) {
-      if (!this.isDisconnected()) {
-         sendQueuer.addPriorityMessageToQueue(message);
-      }
-   }
+   
 
    public SocketConnection(ConnectedTarget owner, java.net.Socket socket) {
       super (owner);

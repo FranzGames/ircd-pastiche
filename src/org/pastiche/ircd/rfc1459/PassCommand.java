@@ -18,26 +18,25 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 public class PassCommand extends org.pastiche.ircd.Command {
-public void process() {
-   if (getArgumentCount() < 1)
-      {
-		ErrorHandler.getInstance().needMoreParams(getSource(), "PASS");
-      return;
+
+   public void process() {
+      if (getArgumentCount() < 1) {
+         ErrorHandler.getInstance().needMoreParams(getSource(), "PASS");
+         return;
       }
 
-	String passwd = getArgument(0);
-   if (getSource () instanceof UnregisteredClient)
-      {
-	   UnregisteredClient source = (UnregisteredClient) getSource();
+      String passwd = getArgument(0);
+      if (getSource() instanceof UnregisteredClient) {
+         UnregisteredClient source = (UnregisteredClient) getSource();
 
-      source.setPassword (passwd);
+         source.setPassword(passwd);
+      } else {
+         ErrorHandler.getInstance().alreadyRegistered(getSource());
       }
-   else
-		ErrorHandler.getInstance().alreadyRegistered(getSource());
-}
-public boolean requiresProcess() {
-	return true;
-}
+   }
+
+   public boolean requiresProcess() {
+      return true;
+   }
 }

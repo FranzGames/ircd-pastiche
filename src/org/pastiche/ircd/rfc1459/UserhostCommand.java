@@ -1,5 +1,8 @@
 package org.pastiche.ircd.rfc1459;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  *   Pastiche IRCd - Java Internet Relay Chat
  *   Copyright (C) 2001 Charles Miller
@@ -31,23 +34,32 @@ public void process() {
       return;
    }
    
+      List<String> replies = new ArrayList<String>();
+      
 	// FIXME: needs IRCop and AWAY/HERE notification.
 	java.util.Iterator i = getArguments().iterator();
-	StringBuffer reply = new StringBuffer(getArguments().size() * NickNormalizer.MAX_NICK_LENGTH);
 	while (i.hasNext()) {
 		RegisteredUser found = (RegisteredUser) 
 			getSource().getServer().getTarget((String)i.next());
 
 		if (found != null) {
+                  StringBuilder reply = new StringBuilder();
+                  
 			reply.append(found.getNick());
 			reply.append("=+");
 			reply.append(found.getUsername());
 			reply.append("@");
 			reply.append(found.getHostname());
+                  
+                  replies.add(reply.toString());
 		}
 	}
 
-	ReplyHandler.getInstance().userhost(getSource(), reply.toString());
+      String[] entries = new String[replies.size()];
+      
+      entries = replies.toArray(entries);
+      
+	ReplyHandler.getInstance().userhost(getSource(), entries);
 }
 @Override
 public boolean requiresProcess() {

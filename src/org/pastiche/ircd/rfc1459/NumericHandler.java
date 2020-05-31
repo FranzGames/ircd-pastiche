@@ -21,7 +21,13 @@ package org.pastiche.ircd.rfc1459;
 /**
  * <p>
  * Abstract superclass of the two numeric handling classes.
+ * </p>
  */
+
+import org.pastiche.ircd.IrcMessage;
+import java.util.List;
+import java.util.ArrayList;
+
 public abstract class NumericHandler {
 
    public NumericHandler() {
@@ -32,7 +38,12 @@ public abstract class NumericHandler {
     * FIXME: Will break on multi-server networks when sending numeric to remote
     * server
     */
-   protected void sendTo(org.pastiche.ircd.Target target, String numeric, String message) {
-      target.send(target.getServer(), numeric + " " + target.getName() + " " + message);
+   protected void sendTo(org.pastiche.ircd.Target target, IrcMessage msg) {
+      target.send(target.getServer(), new TargetIrcMessage (msg, target.getName()));
    }
+
+/*   protected void sendTo(org.pastiche.ircd.Target target, String numeric, String message) {
+      target.send(target.getServer(), numeric + " " + target.getName() + " " + message);
+   }*/
+  
 }

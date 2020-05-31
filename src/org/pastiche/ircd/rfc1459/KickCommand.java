@@ -1,5 +1,7 @@
 package org.pastiche.ircd.rfc1459;
 
+import org.pastiche.ircd.IrcMessage;
+
 /*
  *   Pastiche IRCd - Java Internet Relay Chat
  *   Copyright (C) 2001 Charles Miller
@@ -18,62 +20,71 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 public class KickCommand extends org.pastiche.ircd.Command {
-	private boolean requiresProcess = true;
-public void notifyChannelOfKick(Channel channel, org.pastiche.ircd.Target victim) {
-	org.pastiche.ircd.Target[] members = channel.getMembers();
-	String kickReason = getArgument(2);
 
-	if (kickReason == null)
-		kickReason = getSource().getName();
+   private boolean requiresProcess = true;
 
-	for (int i = 0; i < members.length; i++) {
-		members[i].send(getSource(), "KICK " + channel.getName() + " " + victim.getName() + " :" + kickReason);
-	}
-}
-public void preProcess() {
-	if (getArgumentCount() < 2) {
-		ErrorHandler.getInstance().needMoreParams(getSource(), getName());
-		requiresProcess = false;
-	}
-}
-public void process() {
-	String[] channels = this.calculateTargets(0);
-	String[] nicks = this.calculateTargets(1);
+   public void notifyChannelOfKick(Channel channel, org.pastiche.ircd.Target victim) {
+      org.pastiche.ircd.Target[] members = channel.getMembers();
+      String kickReason = getArgument(2);
 
-	for (int i = 0; i < channels.length; i++) {
-		Channel channel = (Channel) getSource().getServer().getChannel(channels[i]);
+      if (kickReason == null) {
+         kickReason = getSource().getName();
+      }
 
-		if (channel == null) {
-			ErrorHandler.getInstance().noSuchChannel(getSource(), channels[i]);
-			continue;
-		}
+      for (int i = 0; i < members.length; i++) {
+         IrcMessage msg = new IrcMessage ("KICK", kickReason);
+         msg.addParameter(victim.getName());
+         TargetIrcMessage targetMsg = new TargetIrcMessage (msg, channel.getName());
+         
+         members[i].send(getSource(), targetMsg);
+      }
+   }
 
-		if (!channel.isOnChannel(getSource())) {
-			ErrorHandler.getInstance().notInChannel(getSource(), channels[i]);
-			continue;
-		}
-		
-		if (!channel.isOp(getSource())) {
-			ErrorHandler.getInstance().chanopPrivsNeeded(getSource(), channel);
-			continue;
-		}
+   public void preProcess() {
+      if (getArgumentCount() < 2) {
+         ErrorHandler.getInstance().needMoreParams(getSource(), getName());
+         requiresProcess = false;
+      }
+   }
 
-		for (int j = 0; j < nicks.length; j++) {
-			org.pastiche.ircd.Target victim = getSource().getServer().getUser(nicks[j]);
-			if ((victim != null) && channel.isOnChannel(victim)) {
-				notifyChannelOfKick(channel, victim);
-				try {
-					channel.remove(victim);
-				} catch (org.pastiche.ircd.NotOnChannelException noce) {
-				}
-			}
-			// drop non-existant, not on channel nicks on floor.
-		}	
-	}
-}
-public boolean requiresProcess() {
-	return requiresProcess;
-}
+   public void process() {
+      String[] channels = this.calculateTargets(0);
+      String[] nicks = this.calculateTargets(1);
+
+      for (int i = 0; i < channels.length; i++) {
+         Channel channel = (Channel) getSource().getServer().getChannel(channels[i]);
+
+         if (channel == null) {
+            ErrorHandler.getInstance().noSuchChannel(getSource(), channels[i]);
+            continue;
+         }
+
+         if (!channel.isOnChannel(getSource())) {
+            ErrorHandler.getInstance().notInChannel(getSource(), channels[i]);
+            continue;
+         }
+
+         if (!channel.isOp(getSource())) {
+            ErrorHandler.getInstance().chanopPrivsNeeded(getSource(), channel);
+            continue;
+         }
+
+         for (int j = 0; j < nicks.length; j++) {
+            org.pastiche.ircd.Target victim = getSource().getServer().getUser(nicks[j]);
+            if ((victim != null) && channel.isOnChannel(victim)) {
+               notifyChannelOfKick(channel, victim);
+               try {
+                  channel.remove(victim);
+               } catch (org.pastiche.ircd.NotOnChannelException noce) {
+               }
+            }
+            // drop non-existant, not on channel nicks on floor.
+         }
+      }
+   }
+
+   public boolean requiresProcess() {
+      return requiresProcess;
+   }
 }

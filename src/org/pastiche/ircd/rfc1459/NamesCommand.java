@@ -1,5 +1,8 @@
 package org.pastiche.ircd.rfc1459;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  *   Pastiche IRCd - Java Internet Relay Chat
  *   Copyright (C) 2001 Charles Miller
@@ -18,60 +21,49 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 public class NamesCommand extends org.pastiche.ircd.Command {
-public void process() {
-	String[] targets = calculateTargets(0);
-	StringBuffer editedTargetList;
 
-   if (targets == null || targets.length == 0)
-      {
-      java.util.Vector vec = new java.util.Vector ();
+   public void process() {
+      String[] targets = calculateTargets(0);
 
-      java.util.Iterator iter = getSource().getServer().getChannels ();
+      if (targets == null || targets.length == 0) {
+         java.util.Vector vec = new java.util.Vector();
 
-      if (iter != null)
-         {
-         int len = 0;
+         java.util.Iterator iter = getSource().getServer().getChannels();
 
-         while (iter.hasNext ())
-            {
-            String name = ((Channel) iter.next ()).getName ();
-            vec.addElement (name);
-
-            if (name != null)
-               len += name.length ();
+         if (iter != null) {
+            while (iter.hasNext()) {
+               String name = ((Channel) iter.next()).getName();
+               vec.addElement(name);
             }
 
-         targets = new String[vec.size ()];
+            targets = new String[vec.size()];
 
-         vec.copyInto (targets);
-         editedTargetList = new StringBuffer(len);
+            vec.copyInto(targets);
          }
-      else
-         editedTargetList = new StringBuffer();
       }
-   else
-      editedTargetList = new StringBuffer(getArgument(0).length());
 
-	for (int i = 0; i < targets.length; i++) {
-		Channel channel = (Channel) getSource().getServer().getChannel(targets[i]);
+      List<String> channels = new ArrayList<String>();
 
-		if (channel == null) {
-			continue;
-		}
+      for (int i = 0; i < targets.length; i++) {
+         Channel channel = (Channel) getSource().getServer().getChannel(targets[i]);
 
-		if (editedTargetList.length() == 0) {
-			editedTargetList.append(channel.getName());
-		} else {
-			editedTargetList.append("," + channel.getName());
-		}
+         if (channel == null) {
+            continue;
+         }
 
-		ReplyHandler.getInstance().names(getSource(), channel, channel.getMembers());
-	}
-	ReplyHandler.getInstance().namesEnd(getSource(), editedTargetList.toString());
-}
-public boolean requiresProcess() {
-	return true;
-}
+         channels.add(channel.getName());
+
+         ReplyHandler.getInstance().names(getSource(), channel, channel.getMembers());
+      }
+      
+      String[] names = new String[channels.size()];
+      
+      names = channels.toArray(names);
+      ReplyHandler.getInstance().namesEnd(getSource(), names);
+   }
+
+   public boolean requiresProcess() {
+      return true;
+   }
 }

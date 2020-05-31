@@ -18,6 +18,7 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import org.pastiche.ircd.IrcMessage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.pastiche.ircd.IrcdConfiguration;
@@ -59,10 +60,11 @@ public class Channel extends org.pastiche.ircd.Channel {
          ops.add(user);
       }
 
-      java.util.Iterator i = getVisibleLocalTargets().iterator();
+      java.util.Iterator<Target> i = getVisibleLocalTargets().iterator();
+      IrcMessage msg = new IrcMessage ("JOIN", getName());
 
       while (i.hasNext()) {
-         ((org.pastiche.ircd.Target) i.next()).send(user, "JOIN :" + getName());
+         i.next().send(user, msg);
       }
    }
 
@@ -274,9 +276,10 @@ public class Channel extends org.pastiche.ircd.Channel {
 
    private void notifyMembersOfNewTopic(org.pastiche.ircd.Target setter) {
       org.pastiche.ircd.Target[] members = getMembers();
+      TargetIrcMessage msg = new TargetIrcMessage (new IrcMessage ("TOPIC", getTopic()), getName());
 
       for (int i = 0; i < members.length; i++) {
-         members[i].send(setter, "TOPIC " + getName() + " :" + getTopic());
+         members[i].send(setter, msg);
       }
    }
 
@@ -284,19 +287,19 @@ public class Channel extends org.pastiche.ircd.Channel {
       ops.add(t);
    }
 
-   public void remove(org.pastiche.ircd.Target user, String notifyCommandLine) throws org.pastiche.ircd.NotOnChannelException {
+   public void remove(org.pastiche.ircd.Target user, IrcMessage msg) throws org.pastiche.ircd.NotOnChannelException {
       super.remove(user);
       removeInvitation(user);
       deop(user);
       deVoice(user);
 
-      java.util.Iterator i = getVisibleLocalTargets().iterator();
+      java.util.Iterator<Target> i = getVisibleLocalTargets().iterator();
 
       while (i.hasNext()) {
-         ((org.pastiche.ircd.Target) i.next()).send(user, notifyCommandLine);
+         i.next().send(user, msg);
       }
 
-      user.send(user, notifyCommandLine);
+      user.send(user, msg);
    }
 
    public void removeBan(String mask) {

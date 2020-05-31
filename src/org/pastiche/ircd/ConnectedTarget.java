@@ -1,6 +1,8 @@
 package org.pastiche.ircd;
 
 import java.net.Socket;
+import org.pastiche.ircd.rfc1459.SourceIrcMessage;
+import org.pastiche.ircd.rfc1459.TargetIrcMessage;
 
 /**
  * <p>
@@ -28,15 +30,15 @@ public abstract class ConnectedTarget implements Target {
          resetLastCommandTime();
       }
    }
-
-   protected void send(String message) {
+   
+   protected void send(IrcMessage message) {
       if (!connection.isDisconnected()) {
 //         System.out.println ("Msg: "+message);
          connection.send(message);
       }
    }
 
-   protected void sendPriority(String message) {
+   protected void sendPriority(IrcMessage message) {
       if (!connection.isDisconnected()) {
 //         System.out.println ("Priority Msg: "+message);
          connection.sendPriority(message);
@@ -44,14 +46,15 @@ public abstract class ConnectedTarget implements Target {
    }
 
    public void ping() {
-      sendPriority("PING :" + IrcdConfiguration.getInstance().getServerName());
+      IrcMessage msg = new IrcMessage ("PING", IrcdConfiguration.getInstance().getServerName());
+      sendPriority(msg);
    }
 
    public abstract CommandFactory getCommandFactory();
 
-   protected abstract void doDisconnect(String reason);
+   public abstract void doDisconnect(String reason);
 
-   protected abstract void doDisconnect(Exception error);
+   public abstract void doDisconnect(Exception error);
 
    private long lastCommandTime = 0;
    private long lastUnidleTime = 0;
@@ -131,8 +134,16 @@ public abstract class ConnectedTarget implements Target {
       this.lastCommandTime = System.currentTimeMillis();
    }
 
-   public void send(Target source, java.lang.String commandLine) {
-      send(":" + source.getLongName() + " " + commandLine);
+   public void send(Target source, IrcMessage msg) {
+      SourceIrcMessage srcMsg;
+      
+      if (msg instanceof TargetIrcMessage) {
+         srcMsg = new SourceIrcMessage ((TargetIrcMessage) msg, source.getLongName());
+      } else {
+         srcMsg = new SourceIrcMessage ((IrcMessage) msg, source.getLongName());
+      }
+      
+      send(srcMsg);
    }
 
    public void setConnection(Connection connection) {

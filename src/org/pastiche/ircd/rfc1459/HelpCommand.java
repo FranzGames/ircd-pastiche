@@ -18,18 +18,18 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+import org.pastiche.ircd.IrcMessage;
 import org.pastiche.ircd.Command;
-import org.pastiche.ircd.CommandFactory;
-import org.pastiche.ircd.CommandQueue;
 
 public class HelpCommand extends Command {
 
-public void preProcess() {
-	java.util.Iterator i = ((org.pastiche.ircd.ConnectedTarget)getSource()).getCommandFactory().getAvailableCommands();
+   public void preProcess() {
+      java.util.Iterator<String> i = ((org.pastiche.ircd.ConnectedTarget) getSource()).getCommandFactory().getAvailableCommands();
 
-	while (i.hasNext()) {
-		getSource().send(getSource().getServer(), "NOTICE " + getSource().getName() + " :" + i.next());
-	}
-}
+      while (i.hasNext()) {
+         TargetIrcMessage msg = new TargetIrcMessage(new IrcMessage("NOTICE", i.next()), getSource().getName());
+
+         getSource().send(getSource().getServer(), msg);
+      }
+   }
 }

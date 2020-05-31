@@ -39,7 +39,7 @@ public void process() {
 				continue;
 			}
 			
-			((RegisteredUser)getSource()).part(channel, "PART :" + channel.getName());
+			((RegisteredUser)getSource()).part(channel, channel.getName());
 		} catch (org.pastiche.ircd.NotOnChannelException aoce) {
 			ErrorHandler.getInstance().notInChannel(getSource(), channelNames[i]);
 		}

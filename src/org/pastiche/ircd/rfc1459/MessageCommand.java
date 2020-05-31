@@ -18,58 +18,61 @@ package org.pastiche.ircd.rfc1459;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+import org.pastiche.ircd.IrcMessage;
 import org.pastiche.ircd.Target;
 
 /**
- * Abstract superclass for NOTICE and PRIVMSG, since they
- * behave identically anyway.
+ * Abstract superclass for NOTICE and PRIVMSG, since they behave identically
+ * anyway.
  */
 public abstract class MessageCommand extends org.pastiche.ircd.Command {
-	private boolean requiresProcess = true;
-protected abstract String getCommandName();
-public void preProcess() {
-	if (getArgumentCount() < 2) {
-		ErrorHandler.getInstance().noTextToSend(getSource());
-		requiresProcess = false;
-	}
-}
-public void process() {
-	String[] targets = calculateTargets(0);
 
-	for (int i = 0; i < targets.length; i++) {
-		Target target = getSource().getServer().getTarget(targets[i]);
-      boolean isChannel = (target instanceof Channel);
+   private boolean requiresProcess = true;
 
-		if (target != null)
-		   {
-			if (!target.canSend(getSource()))
-			   {
-				if (isChannel)
-				   {
-					ErrorHandler.getInstance().cannotSendToChan(getSource(), (Channel)target);
-				   } // else drop on floor
-				return;
-			   }
+   protected abstract String getCommandName();
 
-         if (!isChannel)
-            {
-            if (((RegisteredUser)target).isAway())
-			      ReplyHandler.getInstance().away (getSource(), targets[i], ((RegisteredUser) target).getAwayMsg ());
-            else
-			      target.send(getSource(), getCommandName() + " " + targets[i] + " :" + getArgument(1));
-            }
-         else
-			   target.send(getSource(), getCommandName() + " " + targets[i] + " :" + getArgument(1));
-		   }
-      else
-         {
-			ErrorHandler.getInstance().noSuchNick(getSource(), targets[i]);
-   		}
-   	}
+   public void preProcess() {
+      if (getArgumentCount() < 2) {
+         ErrorHandler.getInstance().noTextToSend(getSource());
+         requiresProcess = false;
+      }
    }
 
-public boolean requiresProcess() {
-	return requiresProcess;
-}
+   public void process() {
+      String[] targets = calculateTargets(0);
+
+      for (int i = 0; i < targets.length; i++) {
+         Target target = getSource().getServer().getTarget(targets[i]);
+         boolean isChannel = (target instanceof Channel);
+
+         if (target != null) {
+            if (!target.canSend(getSource())) {
+               if (isChannel) {
+                  ErrorHandler.getInstance().cannotSendToChan(getSource(), (Channel) target);
+               } // else drop on floor
+               return;
+            }
+
+            if (!isChannel) {
+               if (((RegisteredUser) target).isAway()) {
+                  ReplyHandler.getInstance().away(getSource(), targets[i], ((RegisteredUser) target).getAwayMsg());
+               } else {
+                  TargetIrcMessage msg = new TargetIrcMessage (new IrcMessage (getCommandName(), getArgument(1)), targets[i]);
+                  
+                  target.send(getSource(), msg);
+               }
+            } else {
+               TargetIrcMessage msg = new TargetIrcMessage (new IrcMessage (getCommandName(), getArgument(1)), targets[i]);
+               
+               target.send(getSource(), msg);
+            }
+         } else {
+            ErrorHandler.getInstance().noSuchNick(getSource(), targets[i]);
+         }
+      }
+   }
+
+   public boolean requiresProcess() {
+      return requiresProcess;
+   }
 }
