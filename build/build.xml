@@ -31,28 +31,20 @@
   <target name="dist" depends="compile">
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib/libs"/>
-    <mkdir dir="${dist}/bin"/>
-    <mkdir dir="${dist}/conf"/>
 
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
     <jar jarfile="${dist}/lib/ircd.jar" basedir="${build}" manifest="build/manifest"/>
 
-    <!-- Copy files to create the bin directory  -->
-    <copy file="${res}/ircd.cmd" todir="${dist}/bin"/>
-    <copy file="${res}/ircd.sh" todir="${dist}/bin"/>
-    <chmod file="${dist}/bin/ircd.sh" perm="+x"/>
-
     <!-- Copy files to conf directory  -->
-    <copy todir="${dist}/conf">
+    <copy todir="${dist}">
        <fileset dir="${res}"/>
     </copy>
+
+    <chmod file="${dist}/bin/ircd.sh" perm="+x"/>
 
     <copy todir="${dist}/lib/libs">
        <fileset dir="${lib}"/>
     </copy>
-
-    <delete file="${dist}/conf/ircd.sh"/>
-    <delete file="${dist}/conf/ircd.cmd"/>
   </target>
 
   <target name="clean">
